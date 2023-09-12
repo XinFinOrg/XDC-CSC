@@ -16,5 +16,6 @@ jobs:
           node-version: "20.x"
       - name: Check smart contract
         run: |
+          cd $GITHUB_WORKSPACE
           yarn 
-          yarn hardhat test
+          npx hardhat test
