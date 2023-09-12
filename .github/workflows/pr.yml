@@ -17,4 +17,4 @@ jobs:
       - name: Check smart contract
         run: |
           yarn 
-          npx hardhat test
+          yarn hardhat test
