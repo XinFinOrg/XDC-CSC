@@ -1,6 +1,6 @@
 const fetch = require("node-fetch").default;
 const deploy = require("../../deployment.config.json");
-
+const subnetUrl = "https://devnetstats.apothem.network/subnet";
 async function data() {
   const block0 = {
     jsonrpc: "2.0",
@@ -17,12 +17,12 @@ async function data() {
   let data0;
   let data1;
   try {
-    const block0res = await fetch(deploy["xdcsubnet"], {
+    const block0res = await fetch(subnetUrl, {
       method: "POST",
       body: JSON.stringify(block0),
       headers: { "Content-Type": "application/json" },
     });
-    const block1res = await fetch(deploy["xdcsubnet"], {
+    const block1res = await fetch(subnetUrl, {
       method: "POST",
       body: JSON.stringify(block1),
       headers: { "Content-Type": "application/json" },

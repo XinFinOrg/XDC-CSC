@@ -33,8 +33,6 @@ This step is recommended to complete in python virtual environment because it is
    - `validators`: List of initial validator addresses
    - `gap`: GAP block number on public chain
    - `epoch`: EPOCH block number on public chain
-   - `xdcparentnet`: Targeted XDC public chain devnet, testnet or mainnet node RPC link
-   - `xdcsubnet`: Targeted XDC private subnet chain devnet, testnet or mainnet node RPC link
 
 2. Create a `.env` file which contain a valid account privatekey, check `.env.sample` for example
 
