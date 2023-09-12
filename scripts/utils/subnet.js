@@ -1,5 +1,4 @@
 const fetch = require("node-fetch").default;
-const deploy = require("../../deployment.config.json");
 const subnetUrl = "https://devnetstats.apothem.network/subnet";
 async function data() {
   const block0 = {
