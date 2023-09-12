@@ -1,63 +1,69 @@
 # XDC Checkpoint Smart Contract
 
-This folder has provided scripts for:
+This repository contains scripts for building, testing, and deploying the XDC checkpoint smart contract. Follow the guide below to get started.
 
-- Contract Building and Testing
-- Contract Deployment
+## Prerequisites
 
-## Contract Building and Testing:
+Ensure you have Node.js version 20 or higher installed on your system.
 
-Environmental preparation
+## Contract Building and Testing
 
-###### Nodejs 16 or higher version
+### Setting up the Environment
 
-Install dependencies
+1. **Install Dependencies**
+   Install the necessary dependencies using yarn:
+   
+   ```shell
+   yarn
+   ```
 
-```shell
-yarn
-```
+2. **Testing**
+   Compile and test the contract using the following commands:
 
-Test
+   ```shell
+   npx hardhat test
+   ```
 
-```shell
-npx hardhat compile
-npx hardhat test
-```
+## Contract Setup
 
-## Contract Setup:
+We recommend setting up the contract in a Python virtual environment since it utilizes the web3 library adapted for XDC. Before beginning, carry out these two steps:
 
-This step is recommended to complete in python virtual environment because it is going to use the web3 library adapted for XDC. And before running the process, it is required to performed two operations:
-
-1. Fill in the fields in `deployment.config.json`
-
+1. **Configuration**
+   
+   Complete the fields in `deployment.config.json`:
+   
    - `validators`: List of initial validator addresses
-   - `gap`: GAP block number on public chain
-   - `epoch`: EPOCH block number on public chain
+   - `gap`: GAP block number on the public chain
+   - `epoch`: EPOCH block number on the public chain
 
-   Check your network in `network.config.js`
+   Configure your network in `network.config.js`:
 
-   - `xdcparentnet`: xdcparentnet rpc url
-   - `xdcsubnet`: xdcparentnet rpc url
+   - `xdcparentnet`: xdcparentnet RPC URL
+   - `xdcsubnet`: xdcsubnet RPC URL
 
-2. Create a `.env` file which contain a valid account privatekey, check `.env.sample` for example
+2. **Environment Variables**
+   
+   Create a `.env` file containing a valid account private key (refer to `.env.sample` for an example).
 
-## Contract Deployment:
+## Contract Deployment
 
-And get the deployed contract address
+Deploy the contract and obtain the deployed contract address as follows:
 
-FullCheckpoint
+1. **Full Checkpoint Deployment**
 
-```shell
-npx hardhat run scripts/FullCheckpointDeploy.js --network xdcparentnet
-```
+   ```shell
+   npx hardhat run scripts/FullCheckpointDeploy.js --network xdcparentnet
+   ```
 
-Lite checkpoint
+2. **Lite Checkpoint Deployment**
 
-```shell
-npx hardhat run scripts/LiteCheckpointDeploy.js --network xdcparentnet
-```
+   ```shell
+   npx hardhat run scripts/LiteCheckpointDeploy.js --network xdcparentnet
+   ```
 
-## Other command
+## Additional Commands
+
+For further assistance or to execute other operations, utilize the commands below:
 
 ```shell
 npx hardhat accounts
@@ -73,23 +79,33 @@ npx solhint 'contracts/**/*.sol'
 npx solhint 'contracts/**/*.sol' --fix
 ```
 
-## Gas report
+## Gas Report
 
-![Alt text](image.png)
+Refer to the gas report:
+![Gas Report](image.png)
 
-## Upgrade module
+## Upgrade Module
 
-1. Fill in the fields in `upgrade.config.json`
-   - `proxyGateway`: Admin contract that manages all proxy contracts
+To upgrade the module, follow these steps:
 
-If you have no proxyGateway contract , deploy your ProxyGateway
+1. **Configuration**
+   
+   Complete the fields in `upgrade.config.json`:
+   
+   - `proxyGateway`: The admin contract managing all proxy contracts.
 
-```shell
-npx hardhat run scripts/proxy/ProxyGatewayDeploy.js --network xdcparentnet
-```
+2. **ProxyGateway Deployment**
 
-2. Upgrade
+   If you don't have a proxyGateway contract, deploy yours using:
 
-```shell
-npx hardhat run scripts/proxy/UpgradeCSC.js --network xdcparentnet
-```
+   ```shell
+   npx hardhat run scripts/proxy/ProxyGatewayDeploy.js --network xdcparentnet
+   ```
+
+3. **Upgrading**
+
+   Upgrade the contract using:
+
+   ```shell
+   npx hardhat run scripts/proxy/UpgradeCSC.js --network xdcparentnet
+   ```
