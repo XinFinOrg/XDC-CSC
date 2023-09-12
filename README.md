@@ -1,4 +1,4 @@
-# XDC Checkpoint Subnet Contract
+# XDC Checkpoint Smart Contract
 
 This folder has provided scripts for:
 
