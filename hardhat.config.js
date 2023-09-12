@@ -22,12 +22,5 @@ module.exports = {
           "1234567890123456789012345678901234567890123456789012345678901234",
       ],
     },
-    xdcsubnet: {
-      url: "https://devnetstats.apothem.network/subnet",
-      accounts: [
-        process.env.PRIVATE_KEY ||
-          "1234567890123456789012345678901234567890123456789012345678901234",
-      ],
-    },
   },
 };
