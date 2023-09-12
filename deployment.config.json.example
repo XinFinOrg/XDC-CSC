@@ -7,7 +7,5 @@
     "0xc07e9FBeB9695c89748594AB0e410ba11f75DE11"
   ],
   "gap": 450,
-  "epoch": 900,
-  "xdcparentnet": "https://devnetstats.apothem.network/devnet",
-  "xdcsubnet": "https://devnetstats.apothem.network/subnet"
+  "epoch": 900
 }
