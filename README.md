@@ -34,6 +34,11 @@ This step is recommended to complete in python virtual environment because it is
    - `gap`: GAP block number on public chain
    - `epoch`: EPOCH block number on public chain
 
+   Check your network in `network.config.js`
+
+   - `xdcparentnet`: xdcparentnet rpc url
+   - `xdcsubnet`: xdcparentnet rpc url
+
 2. Create a `.env` file which contain a valid account privatekey, check `.env.sample` for example
 
 ## Contract Deployment:

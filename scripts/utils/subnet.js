@@ -1,5 +1,5 @@
 const fetch = require("node-fetch").default;
-const subnetUrl = "https://devnetstats.apothem.network/subnet";
+const network = require("../../network.config.json");
 async function data() {
   const block0 = {
     jsonrpc: "2.0",
@@ -16,12 +16,12 @@ async function data() {
   let data0;
   let data1;
   try {
-    const block0res = await fetch(subnetUrl, {
+    const block0res = await fetch(network["xdcsubnet"], {
       method: "POST",
       body: JSON.stringify(block0),
       headers: { "Content-Type": "application/json" },
     });
-    const block1res = await fetch(subnetUrl, {
+    const block1res = await fetch(network["xdcsubnet"], {
       method: "POST",
       body: JSON.stringify(block1),
       headers: { "Content-Type": "application/json" },

@@ -1,6 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-gas-reporter");
 require("dotenv").config();
+const network = require("./network.config.json");
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -16,7 +17,14 @@ module.exports = {
   },
   networks: {
     xdcparentnet: {
-      url: "https://devnetstats.apothem.network/devnet",
+      url: network["xdcparentnet"],
+      accounts: [
+        process.env.PRIVATE_KEY ||
+          "1234567890123456789012345678901234567890123456789012345678901234",
+      ],
+    },
+    xdcsubnet: {
+      url: network["xdcsubnet"],
       accounts: [
         process.env.PRIVATE_KEY ||
           "1234567890123456789012345678901234567890123456789012345678901234",
