@@ -36,7 +36,7 @@ We recommend setting up the contract in a Python virtual environment since it ut
    - `gap`: GAP block number on the public chain
    - `epoch`: EPOCH block number on the public chain
 
-   Configure your network in `network.config.js`:
+   Configure your network in `network.config.json`:
 
    - `xdcparentnet`: xdcparentnet RPC URL
    - `xdcsubnet`: xdcsubnet RPC URL
