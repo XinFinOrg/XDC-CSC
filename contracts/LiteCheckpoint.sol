@@ -150,7 +150,7 @@ contract LiteCheckpoint {
         }
 
         if (sequence >= 3) {
-            headerTree[hashToCommit] = clearLowest(
+            headerTree[hashToCommit] = HeaderReader.clearLowest(
                 headerTree[hashToCommit],
                 64
             );
@@ -310,14 +310,6 @@ contract LiteCheckpoint {
                 "Verification Fail : uniqueCounter < currentValidators.threshold"
             );
         }
-    }
-
-    function clearLowest(
-        uint256 epochInfo,
-        uint256 offset
-    ) private pure returns (uint256) {
-        uint256 mask = ~uint256((1 << offset) - 1);
-        return epochInfo & mask;
     }
 
     function setLookup(address[] memory validatorSet) internal {

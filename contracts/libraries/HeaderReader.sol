@@ -23,6 +23,7 @@ library HeaderReader {
         uint64 roundNumber;
         uint64 prevRoundNumber;
         bytes32 signHash;
+        bytes32 receiptHash;
         bytes[] sigs;
     }
 
@@ -69,6 +70,14 @@ library HeaderReader {
         return signerList;
     }
 
+    function clearLowest(
+        uint256 epochInfo,
+        uint256 offset
+    ) internal pure returns (uint256) {
+        uint256 mask = ~uint256((1 << offset) - 1);
+        return epochInfo & mask;
+    }
+
     /// signature methods.
     function splitSignature(
         bytes memory sig
@@ -107,6 +116,8 @@ library HeaderReader {
         RLPItem[] memory extra = toList(
             toRlpItem(getExtraData(toBytes(ls[12])))
         );
+        bytes32 receiptHash = toBytes32(toBytes(ls[5]));
+
         uint64 roundNumber = uint64(toUint(extra[0]));
         RLPItem[] memory proposedBlock = toList(toList(extra[1])[0]);
         bytes32 parentHash = toBytes32(toBytes(proposedBlock[0]));
@@ -133,6 +144,7 @@ library HeaderReader {
                 roundNumber,
                 parentRoundNumber,
                 signHash,
+                receiptHash,
                 sigs
             );
     }

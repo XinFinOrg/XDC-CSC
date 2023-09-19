@@ -6,9 +6,9 @@ import {HeaderReader} from "./libraries/HeaderReader.sol";
 contract FullCheckpoint {
     // Compressed subnet header information stored on chain
     struct Header {
-        int256 mainnetNum;
+        bytes32 receiptHash;
         bytes32 parentHash;
-        uint256 mix; // padding 63 | uint64 number | uint64 roundNum | uint64 mainnetNum | bool finalized
+        uint256 mix; // padding 64 | uint64 number | uint64 roundNum | uint64 mainnetNum
     }
 
     struct HeaderInfo {
@@ -64,26 +64,21 @@ contract FullCheckpoint {
         (bytes32 ph, int256 n) = HeaderReader.getParentHashAndNumber(
             genesisHeader
         );
-        (bytes32 ph1, int256 n1, uint64 rn) = HeaderReader.getBlock1Params(
-            block1Header
-        );
-        require(n == 0 && n1 == 1, "Invalid Init Block");
+
+        HeaderReader.ValidationParams memory block1 = HeaderReader
+            .getValidationParams(block1Header);
+        require(n == 0 && block1.number == 1, "Invalid Init Block");
         headerTree[genesisHeaderHash] = Header({
+            receiptHash: bytes32(0),
             parentHash: ph,
-            mix: (uint256(n) << 129) |
-                //stay here
-                (uint256(block.number) << 1) |
-                1,
-            mainnetNum: int256(block.number)
+            mix: (uint256(n) << 128) | uint256(block.number)
         });
         headerTree[block1HeaderHash] = Header({
-            parentHash: ph1,
-            mix: (uint256(n1) << 129) |
-                (uint256(rn) << 65) |
-                //stay here
-                (uint256(block.number) << 1) |
-                1,
-            mainnetNum: int256(block.number)
+            receiptHash: block1.receiptHash,
+            parentHash: block1.parentHash,
+            mix: (uint256(block1.number) << 128) |
+                (uint256(block1.roundNumber) << 64) |
+                uint256(block.number)
         });
         validators[1] = Validators({
             set: initialValidatorSet,
@@ -121,7 +116,7 @@ contract FullCheckpoint {
                 validationParams.number >
                     int256(
                         uint256(
-                            uint64(headerTree[latestFinalizedBlock].mix >> 129)
+                            uint64(headerTree[latestFinalizedBlock].mix >> 128)
                         )
                     ),
                 "Old Block"
@@ -134,7 +129,7 @@ contract FullCheckpoint {
                 int256(
                     uint256(
                         uint64(
-                            headerTree[validationParams.parentHash].mix >> 129
+                            headerTree[validationParams.parentHash].mix >> 128
                         )
                     )
                 ) +
@@ -143,12 +138,12 @@ contract FullCheckpoint {
                 "Invalid N"
             );
             require(
-                uint64(headerTree[validationParams.parentHash].mix >> 65) <
+                uint64(headerTree[validationParams.parentHash].mix >> 64) <
                     validationParams.roundNumber,
                 "Invalid RN"
             );
             require(
-                uint64(headerTree[validationParams.parentHash].mix >> 65) ==
+                uint64(headerTree[validationParams.parentHash].mix >> 64) ==
                     validationParams.prevRoundNumber,
                 "Invalid PRN"
             );
@@ -244,15 +239,16 @@ contract FullCheckpoint {
 
             // Store subnet header
             headerTree[blockHash] = Header({
+                receiptHash: validationParams.receiptHash,
                 parentHash: validationParams.parentHash,
-                mix: (uint256(validationParams.number) << 129) |
-                    (uint256(validationParams.roundNumber) << 65),
-                mainnetNum: int256(-1)
+                mix: (uint256(validationParams.number) << 128) |
+                    (uint256(validationParams.roundNumber) << 64) |
+                    uint256(uint64(int64(-1)))
             });
             emit SubnetBlockAccepted(blockHash, validationParams.number);
             if (
                 validationParams.number >
-                int256(uint256(uint64(headerTree[latestBlock].mix >> 129)))
+                int256(uint256(uint64(headerTree[latestBlock].mix >> 128)))
             ) {
                 latestBlock = blockHash;
             }
@@ -279,16 +275,20 @@ contract FullCheckpoint {
     }
 
     function setCommittedStatus(bytes32 startBlock) internal {
-        while ((headerTree[startBlock].mix & 1) != 1 && startBlock != 0) {
-            headerTree[startBlock].mix |= 1;
-            //change mainnetNum value -1 to block.number
-            headerTree[startBlock].mainnetNum = int256(block.number);
+        while (
+            int64(uint64(headerTree[startBlock].mix)) == -1 && startBlock != 0
+        ) {
+            headerTree[startBlock].mix = HeaderReader.clearLowest(
+                headerTree[startBlock].mix,
+                64
+            );
+            headerTree[startBlock].mix |= block.number;
             committedBlocks[
-                int256(uint256(uint64(headerTree[startBlock].mix >> 129)))
+                int256(uint256(uint64(headerTree[startBlock].mix >> 128)))
             ] = startBlock;
             emit SubnetBlockFinalized(
                 startBlock,
-                int256(uint256(uint64(headerTree[startBlock].mix >> 129)))
+                int256(uint256(uint64(headerTree[startBlock].mix >> 128)))
             );
             startBlock = headerTree[startBlock].parentHash;
         }
@@ -326,8 +326,8 @@ contract FullCheckpoint {
             }
 
             if (
-                uint64(headerTree[committedBlock].mix >> 65) !=
-                uint64(headerTree[prevHash].mix >> 65) + uint64(1)
+                uint64(headerTree[committedBlock].mix >> 64) !=
+                uint64(headerTree[prevHash].mix >> 64) + uint64(1)
             ) {
                 isCommitted = false;
                 break;
@@ -345,15 +345,19 @@ contract FullCheckpoint {
     function getHeader(
         bytes32 blockHash
     ) public view returns (HeaderInfo memory) {
+        bool finalized = false;
+        if (int64(uint64(headerTree[blockHash].mix)) != -1) {
+            finalized = true;
+        }
         return
             HeaderInfo({
                 parentHash: headerTree[blockHash].parentHash,
                 number: int256(
-                    uint256(uint64(headerTree[blockHash].mix >> 129))
+                    uint256(uint64(headerTree[blockHash].mix >> 128))
                 ),
-                roundNum: uint64(headerTree[blockHash].mix >> 65),
-                mainnetNum: headerTree[blockHash].mainnetNum,
-                finalized: (headerTree[blockHash].mix & 1) == 1
+                roundNum: uint64(headerTree[blockHash].mix >> 64),
+                mainnetNum: int64(uint64(headerTree[blockHash].mix)),
+                finalized: finalized
             });
     }
 
@@ -366,7 +370,7 @@ contract FullCheckpoint {
     ) public view returns (BlockLite memory) {
         if (committedBlocks[number] == 0) {
             int256 blockNum = int256(
-                uint256(uint64(headerTree[latestBlock].mix >> 129))
+                uint256(uint64(headerTree[latestBlock].mix >> 128))
             );
             if (number > blockNum) {
                 return BlockLite({hash: bytes32(0), number: 0});
@@ -380,7 +384,7 @@ contract FullCheckpoint {
                 BlockLite({
                     hash: currHash,
                     number: int256(
-                        uint256(uint64(headerTree[currHash].mix >> 129))
+                        uint256(uint64(headerTree[currHash].mix >> 128))
                     )
                 });
         } else {
@@ -390,7 +394,7 @@ contract FullCheckpoint {
                     number: int256(
                         uint256(
                             uint64(
-                                headerTree[committedBlocks[number]].mix >> 129
+                                headerTree[committedBlocks[number]].mix >> 128
                             )
                         )
                     )
@@ -410,13 +414,13 @@ contract FullCheckpoint {
             BlockLite({
                 hash: latestBlock,
                 number: int256(
-                    uint256(uint64(headerTree[latestBlock].mix >> 129))
+                    uint256(uint64(headerTree[latestBlock].mix >> 128))
                 )
             }),
             BlockLite({
                 hash: latestFinalizedBlock,
                 number: int256(
-                    uint256(uint64(headerTree[latestFinalizedBlock].mix >> 129))
+                    uint256(uint64(headerTree[latestFinalizedBlock].mix >> 128))
                 )
             })
         );
