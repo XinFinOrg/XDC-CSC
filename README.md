@@ -82,7 +82,7 @@ npx solhint 'contracts/**/*.sol' --fix
 ## Gas Report
 
 Refer to the gas report:
-![Gas Report](image.png)
+![Gas Report](image-1.png)
 
 ## Upgrade Module
 
