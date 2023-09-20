@@ -270,7 +270,9 @@ contract FullCheckpoint {
         }
     }
 
-    /* @dev Confirm all ancestor unconfirmed block
+    /* @dev Confirm all ancestor uncommitted block 
+       if mainnetNum is -1, it means the block is uncommitted.
+       if mainnetNum is not -1, it means the block is committed.
      * @param startBlock
      * @return void
      */
