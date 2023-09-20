@@ -80,10 +80,7 @@ contract LiteCheckpoint {
      * @param list of rlp-encoded block headers.
      */
     function receiveHeader(bytes[] calldata headers) external {
-        require(
-            headers.length > 0,
-            "receiveHeader : Headers length must be greater than 0"
-        );
+        require(headers.length > 0, "Empty headers");
         bytes memory header0 = headers[0];
         saveEpochOrGap(header0);
         //for commit header0 util
@@ -108,14 +105,11 @@ contract LiteCheckpoint {
      * @param headers list of rlp-encoded block headers.
      */
     function commitHeader(bytes32 hashToCommit, bytes[] memory headers) public {
-        require(
-            headers.length > 0,
-            "commitHeader : Headers length must be greater than 0"
-        );
+        require(headers.length > 0, "Empty headers");
 
         require(hashToCommit != 0, "Error epoch hash");
         bytes32 parenHash = unCommittedLastHash[hashToCommit];
-        require(parenHash != 0, "EpochHash not found, may not have been saved");
+        require(parenHash != 0, "EpochHash not found");
 
         UnCommittedHeaderInfo memory uc = getUnCommittedHeader(hashToCommit);
 
@@ -180,9 +174,7 @@ contract LiteCheckpoint {
             revert("Repeated Block blockhash");
         }
         if (current.length == 0 && next.length == 0) {
-            revert(
-                "Not is epoch block format -- current or next length greater than 0"
-            );
+            revert("Malformed Block blockhash empty");
         }
         if (current.length > 0 && next.length > 0) {
             revert("Malformed Block blockhash");
@@ -296,19 +288,17 @@ contract LiteCheckpoint {
                 validationParams.sigs[i]
             );
             if (lookup[signer] != true) {
-                revert("Verification Fail : lookup[signer] != true");
+                revert("Invalid Validator");
             }
 
             signerList[i] = signer;
         }
         (bool isUnique, int256 uniqueCounter) = checkUniqueness(signerList);
         if (!isUnique) {
-            revert("Verification Fail : !isUnique");
+            revert("Repeated Validator");
         }
         if (uniqueCounter * 100 < currentValidators.threshold) {
-            revert(
-                "Verification Fail : uniqueCounter < currentValidators.threshold"
-            );
+            revert("Insufficient Signatures");
         }
     }
 

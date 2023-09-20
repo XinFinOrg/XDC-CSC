@@ -163,18 +163,15 @@ contract FullCheckpoint {
                     validationParams.signHash,
                     validationParams.sigs[i]
                 );
-                if (lookup[signer] != true)
-                    revert("Verification Fail : lookup[signer] is not true");
+                if (lookup[signer] != true) revert("Invalid Validator");
                 signerList[i] = signer;
             }
             (bool isUnique, int256 uniqueCounter) = checkUniqueness(signerList);
             if (!isUnique) {
-                revert("Verification Fail : isUnique is false");
+                revert("Repeated Validator");
             }
             if (uniqueCounter * 100 < currentValidators.threshold) {
-                revert(
-                    "Verification Fail : uniqueCounter lower currentValidators.threshold"
-                );
+                revert("Insufficient Signatures");
             }
 
             if (current.length > 0 && next.length > 0)

@@ -12,7 +12,7 @@ Ensure you have Node.js version 20 or higher installed on your system.
 
 1. **Install Dependencies**
    Install the necessary dependencies using yarn:
-   
+
    ```shell
    yarn
    ```
@@ -29,9 +29,9 @@ Ensure you have Node.js version 20 or higher installed on your system.
 We recommend setting up the contract in a Python virtual environment since it utilizes the web3 library adapted for XDC. Before beginning, carry out these two steps:
 
 1. **Configuration**
-   
+
    Complete the fields in `deployment.config.json`:
-   
+
    - `validators`: List of initial validator addresses
    - `gap`: GAP block number on the public chain
    - `epoch`: EPOCH block number on the public chain
@@ -42,7 +42,7 @@ We recommend setting up the contract in a Python virtual environment since it ut
    - `xdcsubnet`: xdcsubnet RPC URL
 
 2. **Environment Variables**
-   
+
    Create a `.env` file containing a valid account private key (refer to `.env.sample` for an example).
 
 ## Contract Deployment
@@ -89,9 +89,9 @@ Refer to the gas report:
 To upgrade the module, follow these steps:
 
 1. **Configuration**
-   
+
    Complete the fields in `upgrade.config.json`:
-   
+
    - `proxyGateway`: The admin contract managing all proxy contracts.
 
 2. **ProxyGateway Deployment**

@@ -71,7 +71,7 @@ library HeaderReader {
     function splitSignature(
         bytes memory sig
     ) internal pure returns (uint8 v, bytes32 r, bytes32 s) {
-        require(sig.length == 65, "Invalid Signature : sig.length != 65");
+        require(sig.length == 65, "Invalid Signature Length");
         assembly {
             // first 32 bytes, after the length prefix.
             r := mload(add(sig, 32))
