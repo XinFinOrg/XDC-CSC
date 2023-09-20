@@ -49,11 +49,11 @@ const getGenesis = (validators) => {
       util.zeros(32),
       util.zeros(32),
       new Uint8Array(256),
-      util.bigIntToUnpaddedBuffer(0),
-      util.bigIntToUnpaddedBuffer(0),
-      util.bigIntToUnpaddedBuffer(0),
-      util.bigIntToUnpaddedBuffer(0),
-      util.bigIntToUnpaddedBuffer(0),
+      util.bigIntToUnpaddedBytes(0),
+      util.bigIntToUnpaddedBytes(0),
+      util.bigIntToUnpaddedBytes(0),
+      util.bigIntToUnpaddedBytes(0),
+      util.bigIntToUnpaddedBytes(0),
       new Uint8Array([
         ...version,
         ...RLP.encode([
@@ -150,18 +150,18 @@ const composeAndSignBlock = (
 
   var blockBuffer = Buffer.from(
     RLP.encode([
-      util.toBuffer(parent_hash),
+      util.toBytes(parent_hash),
       util.zeros(32),
       util.zeros(32),
       util.zeros(32),
       util.zeros(32),
       util.zeros(32),
       new Uint8Array(256),
-      util.bigIntToUnpaddedBuffer(0),
-      util.bigIntToUnpaddedBuffer(number),
-      util.bigIntToUnpaddedBuffer(0),
-      util.bigIntToUnpaddedBuffer(0),
-      util.bigIntToUnpaddedBuffer(0),
+      util.bigIntToUnpaddedBytes(0),
+      util.bigIntToUnpaddedBytes(number),
+      util.bigIntToUnpaddedBytes(0),
+      util.bigIntToUnpaddedBytes(0),
+      util.bigIntToUnpaddedBytes(0),
       new Uint8Array([
         ...version,
         ...RLP.encode([round_num, [[parent_hash, prn, number - 1], sigs, 0]]),
