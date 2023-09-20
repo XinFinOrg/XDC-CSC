@@ -31,26 +31,15 @@ library HeaderReader {
      * @param genesis rlp-encoded block header.
      * @return (parentHash, genesisNum) pair.
      */
-    function getParentHashAndNumber(
+    function getBlock0Params(
         bytes memory header
-    ) internal pure returns (bytes32, int256) {
+    ) internal pure returns (bytes32, int256, bytes32) {
         RLPItem[] memory ls = toList(toRlpItem(header));
-        return (toBytes32(toBytes(ls[0])), int256(toUint(ls[8])));
-    }
-
-    /*
-     * @param block1 rlp-encoded header.
-     * @return (parentHash, blockNum, blockRoundNum).
-     */
-    function getBlock1Params(
-        bytes memory header
-    ) internal pure returns (bytes32, int256, uint64) {
-        RLPItem[] memory ls = toList(toRlpItem(header));
-        RLPItem[] memory extra = toList(
-            toRlpItem(getExtraData(toBytes(ls[12])))
+        return (
+            toBytes32(toBytes(ls[0])),
+            int256(toUint(ls[8])),
+            toBytes32(toBytes(ls[5]))
         );
-        uint64 roundNumber = uint64(toUint(extra[0]));
-        return (toBytes32(toBytes(ls[0])), int256(toUint(ls[8])), roundNumber);
     }
 
     function getSignerList(

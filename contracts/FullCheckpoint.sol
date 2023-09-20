@@ -61,15 +61,14 @@ contract FullCheckpoint {
 
         bytes32 genesisHeaderHash = keccak256(genesisHeader);
         bytes32 block1HeaderHash = keccak256(block1Header);
-        (bytes32 ph, int256 n) = HeaderReader.getParentHashAndNumber(
-            genesisHeader
-        );
+        (bytes32 ph, int256 n, bytes32 receiptHash) = HeaderReader
+            .getBlock0Params(genesisHeader);
 
         HeaderReader.ValidationParams memory block1 = HeaderReader
             .getValidationParams(block1Header);
         require(n == 0 && block1.number == 1, "Invalid Init Block");
         headerTree[genesisHeaderHash] = Header({
-            receiptHash: bytes32(0),
+            receiptHash: receiptHash,
             parentHash: ph,
             mix: (uint256(n) << 128) | uint256(block.number)
         });
@@ -274,6 +273,10 @@ contract FullCheckpoint {
         }
     }
 
+    /* @dev Confirm all ancestor unconfirmed block
+     * @param startBlock
+     * @return void
+     */
     function setCommittedStatus(bytes32 startBlock) internal {
         while (
             int64(uint64(headerTree[startBlock].mix)) == -1 && startBlock != 0
