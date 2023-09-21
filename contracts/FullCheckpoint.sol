@@ -13,7 +13,6 @@ contract FullCheckpoint {
 
     struct HeaderInfo {
         bytes32 parentHash;
-        bytes32 receiptHash;
         int256 number;
         uint64 roundNum;
         int256 mainnetNum;
@@ -355,7 +354,6 @@ contract FullCheckpoint {
         return
             HeaderInfo({
                 parentHash: headerTree[blockHash].parentHash,
-                receiptHash: headerTree[blockHash].receiptHash,
                 number: int256(
                     uint256(uint64(headerTree[blockHash].mix >> 128))
                 ),
@@ -363,6 +361,14 @@ contract FullCheckpoint {
                 mainnetNum: int64(uint64(headerTree[blockHash].mix)),
                 finalized: finalized
             });
+    }
+
+    /* @dev Get receipt hash of a block
+     * @param subnet block hash.
+     * @return receipt hash.
+     */
+    function getReceiptHash(bytes32 blockHash) public view returns (bytes32) {
+        return headerTree[blockHash].receiptHash;
     }
 
     /*
