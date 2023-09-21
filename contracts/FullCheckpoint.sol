@@ -13,6 +13,7 @@ contract FullCheckpoint {
 
     struct HeaderInfo {
         bytes32 parentHash;
+        bytes32 receiptHash;
         int256 number;
         uint64 roundNum;
         int256 mainnetNum;
@@ -354,6 +355,7 @@ contract FullCheckpoint {
         return
             HeaderInfo({
                 parentHash: headerTree[blockHash].parentHash,
+                receiptHash: headerTree[blockHash].receiptHash,
                 number: int256(
                     uint256(uint64(headerTree[blockHash].mix >> 128))
                 ),
