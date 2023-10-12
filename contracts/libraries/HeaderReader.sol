@@ -23,21 +23,33 @@ library HeaderReader {
         uint64 roundNumber;
         uint64 prevRoundNumber;
         bytes32 signHash;
-        bytes32 receiptHash;
+        bytes32 stateRoot;
+        bytes32 transactionsRoot;
+        bytes32 receiptRoot;
         bytes[] sigs;
     }
 
-    /*
-     * @param genesis rlp-encoded block header.
-     * @return (parentHash, genesisNum) pair.
-     */
+    // @param rlp-encoded block header.
+    // @return (parentHash, blockNum, stateRoot, transactionsRoot, receiptRoot).
     function getBlock0Params(
         bytes memory header
-    ) internal pure returns (bytes32, int256, bytes32) {
+    )
+        internal
+        pure
+        returns (
+            bytes32 parentHash,
+            int256 blockNum,
+            bytes32 stateRoot,
+            bytes32 transactionsRoot,
+            bytes32 receiptRoot
+        )
+    {
         RLPItem[] memory ls = toList(toRlpItem(header));
         return (
             toBytes32(toBytes(ls[0])),
             int256(toUint(ls[8])),
+            toBytes32(toBytes(ls[3])),
+            toBytes32(toBytes(ls[4])),
             toBytes32(toBytes(ls[5]))
         );
     }
@@ -105,7 +117,9 @@ library HeaderReader {
         RLPItem[] memory extra = toList(
             toRlpItem(getExtraData(toBytes(ls[12])))
         );
-        bytes32 receiptHash = toBytes32(toBytes(ls[5]));
+        bytes32 stateRoot = toBytes32(toBytes(ls[3]));
+        bytes32 transactionsRoot = toBytes32(toBytes(ls[4]));
+        bytes32 receiptRoot = toBytes32(toBytes(ls[5]));
 
         uint64 roundNumber = uint64(toUint(extra[0]));
         RLPItem[] memory proposedBlock = toList(toList(extra[1])[0]);
@@ -133,7 +147,9 @@ library HeaderReader {
                 roundNumber,
                 parentRoundNumber,
                 signHash,
-                receiptHash,
+                stateRoot,
+                transactionsRoot,
+                receiptRoot,
                 sigs
             );
     }

@@ -92,10 +92,17 @@ describe("checkpoint", () => {
   });
 
   describe("test checkpoint real block data", () => {
-    it("should receipt hash", async () => {
+    it("should verify roots", async () => {
       const genesisHash = blockToHash(genesis);
-      const receiptHash = await checkpoint.getReceiptHash(genesisHash);
-      expect(receiptHash).to.eq(
+      const roots = await checkpoint.getRoots(genesisHash);
+
+      expect(roots.stateRoot).to.eq(
+        "0x3a9114857792f2a10b4d04ded4e29cb2371535ed749a7686aa2e9885c6007e25"
+      );
+      expect(roots.transactionsRoot).to.eq(
+        "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421"
+      );
+      expect(roots.receiptRoot).to.eq(
         "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421"
       );
     });
@@ -107,9 +114,9 @@ describe("checkpoint", () => {
       const block2Resp = await checkpoint.getHeader(block2Hash);
       const latestBlocks = await checkpoint.getLatestBlocks();
 
-      expect(block2Resp[4]).to.eq(false);
+      expect(block2Resp.finalized).to.eq(false);
 
-      expect(latestBlocks[0][0]).to.eq(block2Hash);
+      expect(latestBlocks[0].hash).to.eq(block2Hash);
     });
 
     it("should confirm a received block", async () => {
@@ -122,9 +129,9 @@ describe("checkpoint", () => {
       const block2Resp = await checkpoint.getHeader(block2Hash);
       const latestBlocks = await checkpoint.getLatestBlocks();
 
-      expect(block2Resp[4]).to.eq(true);
-      expect(latestBlocks[0][0]).to.eq(block5Hash);
-      expect(latestBlocks[1][0]).to.eq(block2Hash);
+      expect(block2Resp.finalized).to.eq(true);
+      expect(latestBlocks[0].hash).to.eq(block5Hash);
+      expect(latestBlocks[1].hash).to.eq(block2Hash);
     });
     it("should mainnet num submit", async () => {
       await checkpoint.receiveHeader([block2Encoded, block3Encoded]);
@@ -134,12 +141,12 @@ describe("checkpoint", () => {
       const block3Hash = blockToHash(block3Encoded);
       const block2Resp = await checkpoint.getHeader(block2Hash);
 
-      expect(block2Resp[1]).to.eq(2);
-      expect(block2Resp[2]).to.eq(4);
-      expect(block2Resp[3]).to.not.eq(-1);
-      expect(block2Resp[4]).to.eq(true);
+      expect(block2Resp.number).to.eq(2);
+      expect(block2Resp.roundNum).to.eq(4);
+      expect(block2Resp.mainnetNum).to.not.eq(-1);
+      expect(block2Resp.finalized).to.eq(true);
       const block3Resp = await checkpoint.getHeader(block3Hash);
-      expect(block3Resp[3]).to.eq(-1);
+      expect(block3Resp.mainnetNum).to.eq(-1);
     });
   });
 
@@ -160,9 +167,9 @@ describe("checkpoint", () => {
       const block2Resp = await custom.getHeader(block2Hash);
       const latestBlocks = await custom.getLatestBlocks();
 
-      expect(block2Resp[4]).to.eq(false);
+      expect(block2Resp.finalized).to.eq(false);
 
-      expect(latestBlocks[0][0]).to.eq(block2Hash);
+      expect(latestBlocks[0].hash).to.eq(block2Hash);
     });
     it("should confirm a received block", async () => {
       const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
@@ -211,9 +218,9 @@ describe("checkpoint", () => {
       const block2Resp = await custom.getHeader(block2Hash);
       const latestBlocks = await custom.getLatestBlocks();
 
-      expect(block2Resp[4]).to.eq(true);
-      expect(latestBlocks[0][0]).to.eq(block5Hash);
-      expect(latestBlocks[1][0]).to.eq(block2Hash);
+      expect(block2Resp.finalized).to.eq(true);
+      expect(latestBlocks[0].hash).to.eq(block5Hash);
+      expect(latestBlocks[1].hash).to.eq(block2Hash);
     });
     it("should switch a validator set", async () => {
       const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
@@ -321,21 +328,22 @@ describe("checkpoint", () => {
 
       const block7Resp = await custom.getHeader(block7Hash);
 
-      expect(block7Resp[0]).to.eq(block6Hash);
-      expect(block7Resp[1]).to.eq(7);
-      expect(block7Resp[2]).to.eq(7);
-      expect(block7Resp[4]).to.eq(true);
+      expect(block7Resp.parentHash).to.eq(block6Hash);
+      expect(block7Resp.number).to.eq(7);
+      expect(block7Resp.roundNum).to.eq(7);
+      expect(block7Resp.finalized).to.eq(true);
       const latestBlocks = await custom.getLatestBlocks();
-      expect(latestBlocks[0][0]).to.eq(block10Hash);
-      expect(latestBlocks[1][0]).to.eq(block7Hash);
+      expect(latestBlocks[0].hash).to.eq(block10Hash);
+      expect(latestBlocks[1].hash).to.eq(block7Hash);
 
       const blockHeader7Resp = await custom.getHeaderByNumber(7);
-      expect(blockHeader7Resp[0]).to.eq(block7Hash);
-      expect(blockHeader7Resp[1]).to.eq(7);
+
+      expect(blockHeader7Resp.hash).to.eq(block7Hash);
+      expect(blockHeader7Resp.number).to.eq(7);
 
       const blockHeader8Resp = await custom.getHeaderByNumber(8);
-      expect(blockHeader8Resp[0]).to.eq(block8Hash);
-      expect(blockHeader8Resp[1]).to.eq(8);
+      expect(blockHeader8Resp.hash).to.eq(block8Hash);
+      expect(blockHeader8Resp.number).to.eq(8);
 
       const currentValidators = await custom.getCurrentValidators();
       expect(currentValidators[0]).to.deep.eq(next.map((item) => item.address));
@@ -496,12 +504,12 @@ describe("checkpoint", () => {
       await custom.receiveHeader([block4Encoded, block5Encoded]);
 
       const block2Resp = await custom.getHeader(block2Hash);
-      expect(block2Resp[1]).to.eq(2);
-      expect(block2Resp[2]).to.eq(2);
-      expect(block2Resp[3]).to.not.eq(-1);
-      expect(block2Resp[4]).to.eq(true);
+      expect(block2Resp.number).to.eq(2);
+      expect(block2Resp.roundNum).to.eq(2);
+      expect(block2Resp.mainnetNum).to.not.eq(-1);
+      expect(block2Resp.finalized).to.eq(true);
       const block3Resp = await custom.getHeader(block3Hash);
-      expect(block3Resp[3]).to.eq(-1);
+      expect(block3Resp.mainnetNum).to.eq(-1);
     });
   });
 });
