@@ -7,6 +7,8 @@ contract FullCheckpoint {
     // Compressed subnet header information stored on chain
     struct Header {
         bytes32 stateRoot;
+        bytes32 transactionsRoot;
+        bytes32 receiptRoot;
         bytes32 parentHash;
         uint256 mix; // padding 64 | uint64 number | uint64 roundNum | uint64 mainnetNum
     }
@@ -61,19 +63,28 @@ contract FullCheckpoint {
 
         bytes32 genesisHeaderHash = keccak256(genesisHeader);
         bytes32 block1HeaderHash = keccak256(block1Header);
-        (bytes32 ph, int256 n, bytes32 stateRoot) = HeaderReader
-            .getBlock0Params(genesisHeader);
+        (
+            bytes32 ph,
+            int256 n,
+            bytes32 stateRoot,
+            bytes32 transactionsRoot,
+            bytes32 receiptRoot
+        ) = HeaderReader.getBlock0Params(genesisHeader);
 
         HeaderReader.ValidationParams memory block1 = HeaderReader
             .getValidationParams(block1Header);
         require(n == 0 && block1.number == 1, "Invalid Init Block");
         headerTree[genesisHeaderHash] = Header({
+            receiptRoot: receiptRoot,
             stateRoot: stateRoot,
+            transactionsRoot: transactionsRoot,
             parentHash: ph,
             mix: (uint256(n) << 128) | uint256(block.number)
         });
         headerTree[block1HeaderHash] = Header({
+            receiptRoot: block1.receiptRoot,
             stateRoot: block1.stateRoot,
+            transactionsRoot: block1.transactionsRoot,
             parentHash: block1.parentHash,
             mix: (uint256(block1.number) << 128) |
                 (uint256(block1.roundNumber) << 64) |
@@ -236,6 +247,8 @@ contract FullCheckpoint {
             // Store subnet header
             headerTree[blockHash] = Header({
                 stateRoot: validationParams.stateRoot,
+                transactionsRoot: validationParams.transactionsRoot,
+                receiptRoot: validationParams.receiptRoot,
                 parentHash: validationParams.parentHash,
                 mix: (uint256(validationParams.number) << 128) |
                     (uint256(validationParams.roundNumber) << 64) |
@@ -367,8 +380,22 @@ contract FullCheckpoint {
      * @param subnet block hash.
      * @return state root of the block.
      */
-    function getStateRoot(bytes32 blockHash) public view returns (bytes32) {
-        return headerTree[blockHash].stateRoot;
+    function getRoots(
+        bytes32 blockHash
+    )
+        public
+        view
+        returns (
+            bytes32 stateRoot,
+            bytes32 transactionsRoot,
+            bytes32 receiptRoot
+        )
+    {
+        return (
+            headerTree[blockHash].stateRoot,
+            headerTree[blockHash].transactionsRoot,
+            headerTree[blockHash].receiptRoot
+        );
     }
 
     /*
