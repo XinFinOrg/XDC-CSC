@@ -92,11 +92,11 @@ describe("checkpoint", () => {
   });
 
   describe("test checkpoint real block data", () => {
-    it("should receipt hash", async () => {
+    it("should state root", async () => {
       const genesisHash = blockToHash(genesis);
-      const receiptHash = await checkpoint.getReceiptHash(genesisHash);
-      expect(receiptHash).to.eq(
-        "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421"
+      const stateRoot = await checkpoint.getStateRoot(genesisHash);
+      expect(stateRoot).to.eq(
+        "0x3a9114857792f2a10b4d04ded4e29cb2371535ed749a7686aa2e9885c6007e25"
       );
     });
 

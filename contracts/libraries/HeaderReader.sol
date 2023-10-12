@@ -25,6 +25,7 @@ library HeaderReader {
         bytes32 signHash;
         bytes32 receiptHash;
         bytes[] sigs;
+        bytes32 stateRoot;
     }
 
     /*
@@ -38,7 +39,7 @@ library HeaderReader {
         return (
             toBytes32(toBytes(ls[0])),
             int256(toUint(ls[8])),
-            toBytes32(toBytes(ls[5]))
+            toBytes32(toBytes(ls[3]))
         );
     }
 
@@ -105,6 +106,7 @@ library HeaderReader {
         RLPItem[] memory extra = toList(
             toRlpItem(getExtraData(toBytes(ls[12])))
         );
+        bytes32 stateRoot = toBytes32(toBytes(ls[3]));
         bytes32 receiptHash = toBytes32(toBytes(ls[5]));
 
         uint64 roundNumber = uint64(toUint(extra[0]));
@@ -134,7 +136,8 @@ library HeaderReader {
                 parentRoundNumber,
                 signHash,
                 receiptHash,
-                sigs
+                sigs,
+                stateRoot
             );
     }
 
