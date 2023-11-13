@@ -4,10 +4,6 @@ WORKDIR /app
 
 COPY . /app
 
-RUN rm .env deployment.config.json upgrade.config.json || echo ok
-RUN rm yarn.lock || echo ok 
-RUN rm -r node_modules || echo ok
-
 RUN yarn
 
 RUN chmod +x /app/docker/deploy_csc.sh
