@@ -4,7 +4,7 @@ cp /app/config/deployment.config.json /app/deployment.config.json
 cp /app/config/upgrade.config.json /app/upgrade.config.json
 
 if [[ -n "$PARENTCHAIN_WALLET_PK" ]]; then
-  PRIVATE_KEY=${PARENTCHAIN_WALLET_PK:2}
+  PRIVATE_KEY=${PARENTCHAIN_WALLET_PK}
 fi
 
 
@@ -14,13 +14,17 @@ fi
 
 if [[ -z "$PRIVATE_KEY" ]]; then
   if [[ -n "$PARENTCHAIN_WALLET_PK" ]]; then
-    PRIVATE_KEY=${PARENTCHAIN_WALLET_PK:2}
+    PRIVATE_KEY=${PARENTCHAIN_WALLET_PK}
   else
     echo "PARENTCHAIN_WALLET_PK or PRIVATE_KEY not set"
     exit 1
   fi
 fi
 
+if [[ ${PRIVATE_KEY::2} == "0x"  ]]; then
+  PRIVATE_KEY=${PRIVATE_KEY:2}
+fi
+echo "PRIVATE_KEY=${PRIVATE_KEY}" > .env 
 
 if [[ -z "$PARENTCHAIN" ]]; then
   echo 'PARENTCHAIN is not set, default to devnet'

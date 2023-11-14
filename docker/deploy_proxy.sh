@@ -9,7 +9,7 @@ cp /app/config/deployment.config.json /app/deployment.config.json
 #3. check .env file
 
 if [[ -n "$PARENTCHAIN_WALLET_PK" ]]; then
-  PRIVATE_KEY=${PARENTCHAIN_WALLET_PK:2}
+  PRIVATE_KEY=${PARENTCHAIN_WALLET_PK}
 fi
 
 
@@ -19,7 +19,7 @@ fi
 
 if [[ -z "$PRIVATE_KEY" ]]; then
   if [[ -n "$PARENTCHAIN_WALLET_PK" ]]; then
-    PRIVATE_KEY=${PARENTCHAIN_WALLET_PK:2}
+    PRIVATE_KEY=${PARENTCHAIN_WALLET_PK}
   else
     echo "PARENTCHAIN_WALLET_PK or PRIVATE_KEY not set"
     exit 1
