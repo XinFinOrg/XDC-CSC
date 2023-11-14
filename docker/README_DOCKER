@@ -1,2 +1,18 @@
 
+1. Always specify entrypoint script, no default entrypoint. 
+  - deploy_proxy.sh: deploy new proxy gateway and initialize CSC
+  - upgrade_csc.sh: upgrade proxy gateway to the CSC of the current image version.  
+  - deploy_csc.sh: deploy non-upgradable CSC (old method)
+2. Mount js configs to /app/config directory
+  - deployment.config.json: used in all scripts
+  - upgrade.config.json: used in 'upgrade_csc.sh'
+3. ENV can be injected with '--env-file'
+  - PARENTCHAIN_WALLET_PK or PRIVATE_KEY: either can be used
+  - PARENTCHAIN: 'devnet' or 'testnet' 
+  - RELAYER_MODE: 'full' or 'lite', only used in 'deploy_csc.sh'
 
+* The PARENTCHAIN_WALLET_PK that is used for upgrading CSC should be the same as the initilise CSC private key.
+
+
+Example for mounting your current directory
+docker run --env-file .env -v $PWD:/app/config --entrypoint './docker/deploy_proxy.sh' xinfinorg/csc:latest
