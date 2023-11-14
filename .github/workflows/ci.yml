@@ -10,8 +10,8 @@ on:
   workflow_dispatch: #allow manual trigger to workflow
 
 jobs:
-  test_on_pr:
-    name: Test
+  test_build_and_push_to_docker_registry:
+    name: Test, build and push image to registry
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
