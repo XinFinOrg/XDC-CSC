@@ -26,6 +26,10 @@ if [[ -z "$PRIVATE_KEY" ]]; then
   fi
 fi
 
+if [[ ${PRIVATE_KEY::2} == "0x"  ]]; then
+  PRIVATE_KEY=${PRIVATE_KEY:2}
+fi
+echo "PRIVATE_KEY=${PRIVATE_KEY}" > .env 
 
 if [[ -z "$PARENTCHAIN" ]]; then
   echo 'PARENTCHAIN is not set, default to devnet'
