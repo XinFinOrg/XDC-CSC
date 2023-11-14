@@ -1,5 +1,6 @@
 #!/bin/bash
 cd /app
+cp /app/config/deployment.config.json /app/deployment.config.json
 
 #1. check PARENTCHAIN env
 #2. check PRIVATE_KEY env
