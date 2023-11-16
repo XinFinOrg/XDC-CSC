@@ -1,7 +1,21 @@
+const { VoidSigner } = require("ethers");
+
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-gas-reporter");
 require("dotenv").config();
-const network = require("./deployment.config.json");
+
+try {
+  var network = require("./deployment.config.json");
+ }
+ catch (e) {
+  var network = {
+      "xdcparentnet": "https://devnetstats.apothem.network/devnet",
+      "xdcdevnet": "https://devnetstats.apothem.network/devnet",
+      "xdctestnet": "https://erpc.apothem.network/",
+      "xdcsubnet": "https://devnetstats.apothem.network/subnet"
+    }
+ }
+
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -32,14 +46,14 @@ module.exports = {
       ],
     },
     xdcdevnet: {
-      url: "https://devnetstats.apothem.network/devnet",
+      url: network["xdcdevnet"],
       accounts: [
         process.env.PRIVATE_KEY ||
           "1234567890123456789012345678901234567890123456789012345678901234",
       ],
     },
     xdctestnet: {
-      url: "https://erpc.apothem.network/",
+      url: network["xdctestnet"],
       accounts: [
         process.env.PRIVATE_KEY ||
           "1234567890123456789012345678901234567890123456789012345678901234",
