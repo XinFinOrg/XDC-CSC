@@ -53,7 +53,8 @@ async function main() {
 
     fullProxy = await proxyGateway.cscProxies(0);
   } else {
-    await proxyGateway.upgrade(fullProxy, full.address);
+    const tx = await proxyGateway.upgrade(fullProxy, full.address);
+    await tx.wait();
   }
 
   if (liteProxy == "0x0000000000000000000000000000000000000000") {
@@ -69,7 +70,9 @@ async function main() {
     await tx.wait();
     liteProxy = await proxyGateway.cscProxies(1);
   } else {
-    await proxyGateway.upgrade(liteProxy, lite.address);
+    const tx = await proxyGateway.upgrade(liteProxy, lite.address);
+
+    await tx.wait();
   }
 
   console.log("upgrade success");
