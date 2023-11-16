@@ -10,8 +10,6 @@ try {
  catch (e) {
   var network = {
       "xdcparentnet": "https://devnetstats.apothem.network/devnet",
-      "xdcdevnet": "https://devnetstats.apothem.network/devnet",
-      "xdctestnet": "https://erpc.apothem.network/",
       "xdcsubnet": "https://devnetstats.apothem.network/subnet"
     }
  }
@@ -46,14 +44,14 @@ module.exports = {
       ],
     },
     xdcdevnet: {
-      url: network["xdcdevnet"],
+      url: "https://devnetstats.apothem.network/devnet",
       accounts: [
         process.env.PRIVATE_KEY ||
           "1234567890123456789012345678901234567890123456789012345678901234",
       ],
     },
     xdctestnet: {
-      url: network["xdctestnet"],
+      url: "https://erpc.apothem.network/",
       accounts: [
         process.env.PRIVATE_KEY ||
           "1234567890123456789012345678901234567890123456789012345678901234",
