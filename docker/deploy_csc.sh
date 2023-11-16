@@ -33,7 +33,7 @@ if [[ -z "$PARENTCHAIN_URL" ]]; then
   echo "PARENTCHAIN_URL not specified"
   exit 1
 else
-  cat network.config.json | sed -e "s/\"xdcparentnet\".*/\"xdcparentnet\": \"$PARENTCHAIN_URL\",/" > temp.json
+  cat network.config.json | sed -e "s@\"xdcparentnet\".*@\"xdcparentnet\": \"$PARENTCHAIN_URL\",@" > temp.json
   mv temp.json network.config.json
 fi
 
@@ -41,7 +41,7 @@ if [[ -z "$SUBNET_URL" ]]; then
   echo "SUBNET_URL not specified" 
   exit 1
 else
-  cat network.config.json | sed -e "s/\"xdcsubnet\".*/\"xdcsubnet\": \"$SUBNET_URL\",/" > temp.json
+  cat network.config.json | sed -e "s@\"xdcsubnet\".*@\"xdcsubnet\": \"$SUBNET_URL\",@" > temp.json
   mv temp.json network.config.json
 fi
 
