@@ -29,29 +29,30 @@ if [[ ${PRIVATE_KEY::2} == "0x"  ]]; then
 fi
 echo "PRIVATE_KEY=${PRIVATE_KEY}" > .env 
 
-if [[ -z "$PARENTCHAIN" ]]; then
-  echo 'PARENTCHAIN is not set, default to devnet'
-  DEPLOY_NET=xdcdevnet
+if [[ -z "$PARENTCHAIN_URL" ]]; then
+  echo "PARENTCHAIN_URL not specified"
+  exit 1
 else
-  echo "PARENTCHAIN=$PARENTCHAIN"
-  if [[ $PARENTCHAIN == 'devnet' || $PARENTCHAIN == 'xdcdevnet' ]]; then
-      DEPLOY_NET='xdcdevnet'
-  fi
-  if [[ $PARENTCHAIN == 'testnet' || $PARENTCHAIN == 'xdctestnet' ]]; then
-      DEPLOY_NET='xdctestnet'
-  fi
-  echo "Deploying to $DEPLOY_NET"
+  cat network.config.json | sed -e "s/\"xdcparentnet\".*/\"xdcparentnet\": \"$PARENTCHAIN_URL\",/" > temp.json
+  mv temp.json network.config.json
 fi
 
+if [[ -z "$SUBNET_URL" ]]; then
+  echo "SUBNET_URL not specified" 
+  exit 1
+else
+  cat network.config.json | sed -e "s/\"xdcsubnet\".*/\"xdcsubnet\": \"$SUBNET_URL\",/" > temp.json
+  mv temp.json network.config.json
+fi
 
 if [[ $RELAYER_MODE == 'full' ]]
 then
   echo "Deploying full CSC"
-  npx hardhat run scripts/FullCheckpointDeploy.js --network $DEPLOY_NET 2>&1 | tee csc.log
+  npx hardhat run scripts/FullCheckpointDeploy.js --network xdcparentnet 2>&1 | tee csc.log
 elif [[ $RELAYER_MODE == 'lite' ]]
 then
   echo "Deploying lite CSC"
-  npx hardhat run scripts/LiteCheckpointDeploy.js --network $DEPLOY_NET 2>&1 | tee csc.log
+  npx hardhat run scripts/LiteCheckpointDeploy.js --network xdcparentnet 2>&1 | tee csc.log
 else
   echo "Unknown RELAYER_MODE"
   exit 1

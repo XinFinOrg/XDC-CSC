@@ -8,6 +8,4 @@
   ],
   "gap": 450,
   "epoch": 900
-  "xdcparentnet": "https://devnetstats.apothem.network/devnet",
-  "xdcsubnet": "https://devnetstats.apothem.network/subnet"
 }

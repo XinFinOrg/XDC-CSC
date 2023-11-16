@@ -1,5 +1,5 @@
 const fetch = require("node-fetch").default;
-const network = require("../../deployment.config.json");
+const network = require("../../network.config.json");
 async function data() {
   const block0 = {
     jsonrpc: "2.0",

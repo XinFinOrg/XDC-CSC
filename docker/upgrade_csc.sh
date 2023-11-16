@@ -26,18 +26,28 @@ if [[ ${PRIVATE_KEY::2} == "0x"  ]]; then
 fi
 echo "PRIVATE_KEY=${PRIVATE_KEY}" > .env 
 
-if [[ -z "$PARENTCHAIN" ]]; then
-  echo 'PARENTCHAIN is not set, default to devnet'
-  DEPLOY_NET=xdcdevnet
+if [[ -z "$PARENTCHAIN_URL" ]]; then
+  echo "PARENTCHAIN_URL not specified"
+  exit 1
 else
-  echo "PARENTCHAIN=$PARENTCHAIN"
-  if [[ $PARENTCHAIN == 'devnet' || $PARENTCHAIN == 'xdcdevnet' ]]; then
-      DEPLOY_NET='xdcdevnet'
-  fi
-  if [[ $PARENTCHAIN == 'testnet' || $PARENTCHAIN == 'xdctestnet' ]]; then
-      DEPLOY_NET='xdctestnet'
-  fi
-  echo "Deploying to $DEPLOY_NET"
+  cat network.config.json | sed -e "s/\"xdcparentnet\".*/\"xdcparentnet\": \"$PARENTCHAIN_URL\",/" > temp.json
+  mv temp.json network.config.json
+fi
+
+if [[ -z "$SUBNET_URL" ]]; then
+  echo "SUBNET_URL not specified" 
+  exit 1
+else
+  cat network.config.json | sed -e "s/\"xdcsubnet\".*/\"xdcsubnet\": \"$SUBNET_URL\",/" > temp.json
+  mv temp.json network.config.json
+fi
+
+if [[ -z "$PROXY_GATEWAY" ]]; then
+  echo "PROXY_GATEWAY not specified"
+  exit 1
+else
+  JSON="{\"proxyGateway\": \"$PROXY_GATEWAY\"}"
+  echo $JSON > upgrade.config.json
 fi
 
 # UPGRADE=$(npx hardhat run scripts/proxy/UpgradeCSC.js --network xdcparentnet | awk '{print $NF}')
@@ -49,5 +59,5 @@ fi
 # echo "$FULL"
 # echo "$LITE"
 
-npx hardhat run scripts/proxy/UpgradeCSC.js --network $DEPLOY_NET
+npx hardhat run scripts/proxy/UpgradeCSC.js --network xdcparentnet
 # echo "Upgraded Proxy Gateway with CSC"
