@@ -22,14 +22,6 @@ jobs:
         env:
           BRANCH: ${{ github.head_ref }}
         
-
-      # - name: check envs
-      #   run: | 
-      #     echo ${{ github.head_ref }}
-      #     echo ${{ github.repository }}
-      #     echo ${{ github.ref_name }}
-      #     echo ${{ github.sha }}
-
       - name: Record branch env
         id: branch
         run: |
