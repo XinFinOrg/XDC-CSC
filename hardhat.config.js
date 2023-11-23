@@ -1,7 +1,10 @@
+const { VoidSigner } = require("ethers");
+
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-gas-reporter");
 require("dotenv").config();
 const network = require("./network.config.json");
+
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -26,6 +29,20 @@ module.exports = {
     },
     xdcsubnet: {
       url: network["xdcsubnet"],
+      accounts: [
+        process.env.PRIVATE_KEY ||
+          "1234567890123456789012345678901234567890123456789012345678901234",
+      ],
+    },
+    xdcdevnet: {
+      url: network["xdcdevnet"],
+      accounts: [
+        process.env.PRIVATE_KEY ||
+          "1234567890123456789012345678901234567890123456789012345678901234",
+      ],
+    },
+    xdctestnet: {
+      url: network["xdctestnet"],
       accounts: [
         process.env.PRIVATE_KEY ||
           "1234567890123456789012345678901234567890123456789012345678901234",

@@ -10,8 +10,9 @@ async function main() {
   try {
     proxyGateway = await proxyGatewayFactory.deploy();
   } catch (e) {
+    console.log(e)
     throw Error(
-      "depoly to parentnet node failure , pls check the parentnet node status"
+      "deploy to parentnet node failure , pls check the parentnet node status"
     );
   }
 
