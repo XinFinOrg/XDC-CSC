@@ -6,7 +6,6 @@ COPY . /app
 
 RUN yarn
 
-RUN chmod +x /app/docker/deploy_csc.sh
 RUN chmod +x /app/docker/deploy_proxy.sh
 RUN chmod +x /app/docker/upgrade_csc.sh
 
