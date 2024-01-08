@@ -7,8 +7,8 @@
   - deployment.config.json: used in all scripts
   - upgrade.config.json: used in 'upgrade_csc.sh'
 3. ENV can be injected with '--env-file'
-  - PARENTCHAIN_WALLET_PK or PRIVATE_KEY: either can be used
-  - PARENTCHAIN: 'devnet' or 'testnet' 
+  - PARENTNET_WALLET_PK or PRIVATE_KEY: either can be used
+  - PARENTNET: 'devnet' or 'testnet' 
   - RELAYER_MODE: 'full' or 'lite', only used in 'deploy_csc.sh'
 
 * The PARENTCHAIN_WALLET_PK that is used for upgrading CSC should be the same as the initilise CSC private key.
