@@ -92,6 +92,14 @@ describe("checkpoint", () => {
   });
 
   describe("test checkpoint real block data", () => {
+    it("should check defalut value", async () => {
+      const nonExistentBlock = await checkpoint.getHeader(
+        "0x3a9114857792f2a10b4d04ded4e29cb2371535ed749a7686aa2e9885c6007e25"
+      );
+
+      expect(nonExistentBlock.mainnetNum).to.eq(-1);
+      expect(nonExistentBlock.finalized).to.eq(false);
+    });
     it("should verify roots", async () => {
       const genesisHash = blockToHash(genesis);
       const roots = await checkpoint.getRoots(genesisHash);

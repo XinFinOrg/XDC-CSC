@@ -89,6 +89,14 @@ describe("lite checkpoint", () => {
       await loadFixture(fixture));
   });
   describe("test lite checkpoint real block data", () => {
+    it("should check defalut value", async () => {
+      const nonExistentBlock = await liteCheckpoint.getHeader(
+        "0x3a9114857792f2a10b4d04ded4e29cb2371535ed749a7686aa2e9885c6007e25"
+      );
+
+      expect(nonExistentBlock.mainnetNum).to.eq(-1);
+      expect(nonExistentBlock.finalized).to.eq(false);
+    });
     it("should receive a new header which has only the next and uncommitted", async () => {
       await liteCheckpoint.receiveHeader([block451Encoded]);
       const block2Hash = blockToHash(block451Encoded);
