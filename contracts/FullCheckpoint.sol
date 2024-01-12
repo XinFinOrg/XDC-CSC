@@ -360,6 +360,17 @@ contract FullCheckpoint {
     function getHeader(
         bytes32 blockHash
     ) public view returns (HeaderInfo memory) {
+        if (headerTree[blockHash].mix == 0) {
+            return (
+                HeaderInfo({
+                    parentHash: 0,
+                    number: 0,
+                    roundNum: 0,
+                    mainnetNum: -1,
+                    finalized: false
+                })
+            );
+        }
         bool finalized = false;
         if (int64(uint64(headerTree[blockHash].mix)) != -1) {
             finalized = true;
