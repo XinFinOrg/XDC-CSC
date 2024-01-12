@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity =0.8.19;
 
-import {ProxyAdmin, TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
+import {ProxyAdmin, TransparentUpgradeableProxy, ITransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 import {ICheckpoint} from "../interfaces/ICheckpoint.sol";
 
 contract ProxyGateway is ProxyAdmin {
     // 0 full | 1 lite
     mapping(uint256 => TransparentUpgradeableProxy) public cscProxies;
-    // 0 full | 1 lite
-    mapping(uint256 => uint256) public cscVersion;
+
+    //proxy => version
+    mapping(ITransparentUpgradeableProxy => uint256) public version;
 
     event CreateProxy(TransparentUpgradeableProxy proxy);
 
@@ -52,7 +53,7 @@ contract ProxyGateway is ProxyAdmin {
             initEpoch
         );
         cscProxies[0] = createProxy(full, data);
-        cscVersion[0]++;
+
         return cscProxies[0];
     }
 
@@ -80,7 +81,24 @@ contract ProxyGateway is ProxyAdmin {
             initEpoch
         );
         cscProxies[1] = createProxy(lite, data);
-        cscVersion[0]++;
+
         return cscProxies[1];
+    }
+
+    function upgrade(
+        ITransparentUpgradeableProxy proxy,
+        address implementation
+    ) public override {
+        super.upgrade(proxy, implementation);
+        version[proxy]++;
+    }
+
+    function upgradeAndCall(
+        ITransparentUpgradeableProxy proxy,
+        address implementation,
+        bytes memory data
+    ) public payable override {
+        super.upgradeAndCall(proxy, implementation, data);
+        version[proxy]++;
     }
 }
