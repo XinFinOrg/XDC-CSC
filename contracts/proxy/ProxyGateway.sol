@@ -7,6 +7,8 @@ import {ICheckpoint} from "../interfaces/ICheckpoint.sol";
 contract ProxyGateway is ProxyAdmin {
     // 0 full | 1 lite
     mapping(uint256 => TransparentUpgradeableProxy) public cscProxies;
+    // 0 full | 1 lite
+    mapping(uint256 => uint256) public cscVersion;
 
     event CreateProxy(TransparentUpgradeableProxy proxy);
 
@@ -50,6 +52,7 @@ contract ProxyGateway is ProxyAdmin {
             initEpoch
         );
         cscProxies[0] = createProxy(full, data);
+        cscVersion[0]++;
         return cscProxies[0];
     }
 
@@ -77,6 +80,7 @@ contract ProxyGateway is ProxyAdmin {
             initEpoch
         );
         cscProxies[1] = createProxy(lite, data);
+        cscVersion[0]++;
         return cscProxies[1];
     }
 }
