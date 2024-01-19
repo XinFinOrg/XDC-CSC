@@ -29,6 +29,7 @@ async function data() {
     data0 = await block0res.json();
     data1 = await block1res.json();
   } catch (e) {
+    console.error(e, "\n")
     throw Error(
       "Fetch remote subnet node data error , pls check the subnet node status"
     );

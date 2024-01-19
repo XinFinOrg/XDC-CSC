@@ -14,7 +14,7 @@ async function main() {
   try {
     lite = await checkpointFactory.deploy();
   } catch (e) {
-    console.log(e)
+    console.error(e, "\n")
     throw Error(
       "deploy to parentnet node failure , pls check the parentnet node status"
     );
