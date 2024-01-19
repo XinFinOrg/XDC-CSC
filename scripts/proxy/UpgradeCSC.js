@@ -24,7 +24,7 @@ async function main() {
   try {
     full = await fullFactory.deploy();
   } catch (e) {
-    console.log(e)
+    console.error(e)
     throw Error(
       "deploy to parentnet node failure , pls check the parentnet node status"
     );
