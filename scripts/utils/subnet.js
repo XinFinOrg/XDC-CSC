@@ -16,6 +16,7 @@ async function data() {
   let data0;
   let data1;
   try {
+    console.log("connecting to subnet at url: ", network["xdcsubnet"])
     const block0res = await fetch(network["xdcsubnet"], {
       method: "POST",
       body: JSON.stringify(block0),
