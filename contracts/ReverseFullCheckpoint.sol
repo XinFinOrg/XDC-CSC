@@ -189,10 +189,9 @@ contract FullCheckpoint {
                 revert("Malformed Block");
             else if (current.length > 0) {
                 if (
-                    uint64(uint256(validationParams.number)) % INIT_EPOCH ==
-                    0 &&
-                    uint64(uint256(validationParams.number)) / INIT_EPOCH ==
-                    epochNum + 1
+                    validationParams.prevRoundNumber <
+                    validationParams.roundNumber -
+                        (validationParams.roundNumber % INIT_EPOCH)
                 ) {
                     int256 gapNumber = validationParams.number -
                         (validationParams.number %
