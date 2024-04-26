@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity =0.8.19;
 
-import {HeaderReader} from "./libraries/HeaderReader.sol";
+import {ReverseHeaderReader as HeaderReader} from "./libraries/ReverseHeaderReader.sol";
 
 contract FullCheckpoint {
     // Compressed subnet header information stored on chain

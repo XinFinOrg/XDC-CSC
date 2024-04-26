@@ -4,7 +4,7 @@ pragma solidity =0.8.19;
 // HeaderReader is a helper library to read fields out of rlp-encoded blocks.
 // It is mainly consisted of Solidity-RLP(https://github.com/hamdiallam/Solidity-RLP) and
 // solidity-rlp-encode(https://github.com/bakaoh/solidity-rlp-encode)
-library HeaderReader {
+library ReverseHeaderReader {
     // Solidity-RLP defined constants and struct
     uint8 private constant STRING_SHORT_START = 0x80;
     uint8 private constant STRING_LONG_START = 0xb8;
