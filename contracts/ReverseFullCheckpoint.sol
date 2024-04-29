@@ -3,7 +3,7 @@ pragma solidity =0.8.19;
 
 import {ReverseHeaderReader as HeaderReader} from "./libraries/ReverseHeaderReader.sol";
 
-contract FullCheckpoint {
+contract ReverseFullCheckpoint {
     // Compressed subnet header information stored on chain
     struct Header {
         bytes32 stateRoot;

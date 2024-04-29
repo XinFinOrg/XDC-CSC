@@ -1,13 +1,12 @@
 const hre = require("hardhat");
 const deploy = require("../deployment.config.json");
-const subnet = require("./utils/subnet");
+const parentnet = require("./utils/parentnet");
 async function main() {
-  const { data0Encoded, data1Encoded } = await subnet.data();
-  const subnetDeploy = deploy["subnet"];
-
+  const { data0Encoded, data1Encoded } = await parentnet.data();
+  const parentnetDeploy = deploy["parentnet"];
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(
-    "FullCheckpoint"
+    "ReverseFullCheckpoint"
   );
 
   let full;
@@ -16,18 +15,18 @@ async function main() {
   } catch (e) {
     console.error(e, "\n");
     throw Error(
-      "deploy to parentnet node failure , pls check the parentnet node status"
+      "deploy to subnet node failure , pls check the parentnet node status"
     );
   }
 
   await full.deployed();
 
   const tx = await full.init(
-    subnetDeploy["validators"],
+    parentnetDeploy["validators"],
     data0Encoded,
     data1Encoded,
-    subnetDeploy["gap"],
-    subnetDeploy["epoch"]
+    parentnetDeploy["gap"],
+    parentnetDeploy["epoch"]
   );
   await tx.wait();
   console.log("full checkpoint deployed to:", full.address);
