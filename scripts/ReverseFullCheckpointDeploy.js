@@ -3,6 +3,7 @@ const deploy = require("../deployment.config.json");
 const parentnet = require("./utils/parentnet");
 async function main() {
   const { data0Encoded, data1Encoded } = await parentnet.data();
+
   const parentnetDeploy = deploy["parentnet"];
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(
@@ -26,7 +27,8 @@ async function main() {
     data0Encoded,
     data1Encoded,
     parentnetDeploy["gap"],
-    parentnetDeploy["epoch"]
+    parentnetDeploy["epoch"],
+    parentnetDeploy["swtichV2"]
   );
   await tx.wait();
   console.log("full checkpoint deployed to:", full.address);

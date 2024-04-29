@@ -19,13 +19,13 @@ async function data() {
   const block0 = {
     jsonrpc: "2.0",
     method: "XDPoS_getV2BlockByNumber",
-    params: ["0x0"],
+    params: ["0x6BF0D0"],
     id: 1,
   };
   const block1 = {
     jsonrpc: "2.0",
     method: "XDPoS_getV2BlockByNumber",
-    params: ["0x1"],
+    params: ["0x6BF0D1"],
     id: 1,
   };
   let data0;
