@@ -59,6 +59,7 @@ contract ReverseFullCheckpoint {
         uint64 initEpoch,
         int256 initV2Epoch
     ) public {
+        ;
         require(INIT_STATUS == 0, "Already init");
         require(initialValidatorSet.length > 0, "Validator Empty");
 

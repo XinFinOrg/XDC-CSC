@@ -34,7 +34,7 @@ describe("reverse full checkpoint", () => {
   let customeBlock1;
 
   const fixture = async () => {
-    const factory = await ethers.getContractFactory("FullCheckpoint");
+    const factory = await ethers.getContractFactory("ReverseFullCheckpoint");
     const checkpoint = await factory.deploy();
     await checkpoint.init(
       [
