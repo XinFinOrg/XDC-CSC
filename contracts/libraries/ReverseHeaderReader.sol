@@ -189,9 +189,8 @@ library ReverseHeaderReader {
             next = new address[](list1.length - penalty.length);
             uint256 counter = 0;
             for (uint256 i = 0; i < list1.length; i++) {
-                address temp = list1[i];
-                if (!addressExist(penalty, temp)) {
-                    next[counter] = temp;
+                if (!addressExist(penalty, list1[i])) {
+                    next[counter] = list1[i];
                     counter++;
                 }
             }

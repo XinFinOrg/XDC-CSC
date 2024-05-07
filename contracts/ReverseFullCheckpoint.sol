@@ -122,8 +122,7 @@ contract ReverseFullCheckpoint {
             HeaderReader.ValidationParams memory validationParams = HeaderReader
                 .getValidationParams(headers[x]);
 
-            (address[] memory current, address[] memory next) = HeaderReader
-                .getEpoch(headers[x]);
+            address[] memory next = HeaderReader.getEpoch(headers[x]);
 
             // Verify subnet header meta information
             require(validationParams.number > 0, "Repeated Genesis");
