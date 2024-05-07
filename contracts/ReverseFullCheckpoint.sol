@@ -59,7 +59,6 @@ contract ReverseFullCheckpoint {
         uint64 initEpoch,
         int256 initV2Epoch
     ) public {
-        ;
         require(INIT_STATUS == 0, "Already init");
         require(initialValidatorSet.length > 0, "Validator Empty");
 
@@ -191,62 +190,17 @@ contract ReverseFullCheckpoint {
                 revert("Insufficient Signatures");
             }
 
-            if (current.length > 0 && next.length > 0)
-                revert("Malformed Block");
-            else if (current.length > 0) {
-                if (
-                    validationParams.prevRoundNumber <
-                    validationParams.roundNumber -
-                        (validationParams.roundNumber % INIT_EPOCH)
-                ) {
-                    int256 gapNumber = validationParams.number -
-                        (validationParams.number %
-                            int256(uint256(INIT_EPOCH))) -
-                        int256(uint256(INIT_GAP));
-                    // Edge case at the beginning
-                    if (gapNumber < 0) {
-                        gapNumber = 0;
-                    }
-                    unchecked {
-                        epochNum++;
-                        gapNumber++;
-                    }
-
-                    if (validators[gapNumber].threshold > 0) {
-                        if (
-                            !HeaderReader.areListsEqual(
-                                validators[gapNumber].set,
-                                current
-                            )
-                        ) {
-                            revert("Mismatched Validators");
-                        }
-                        setLookup(validators[gapNumber].set);
-                        currentValidators = validators[gapNumber];
-                    } else revert("Missing Current Validators");
-                } else {
-                    revert("Invalid Current Block");
-                }
-            } else if (next.length > 0) {
-                if (
-                    uint64(
-                        uint256(
-                            validationParams.number %
-                                int256(uint256(INIT_EPOCH))
-                        )
-                    ) ==
-                    INIT_EPOCH - INIT_GAP + 1 &&
-                    uint64(uint256(validationParams.number)) / INIT_EPOCH ==
-                    epochNum
-                ) {
-                    (bool isValidatorUnique, ) = checkUniqueness(next);
-                    if (!isValidatorUnique) revert("Repeated Validator");
-
-                    validators[validationParams.number] = Validators({
-                        set: next,
-                        threshold: int256((next.length * 2 * 100) / 3)
-                    });
-                } else revert("Invalid Next Block");
+            if (
+                next.length > 0 &&
+                validationParams.prevRoundNumber <
+                validationParams.roundNumber -
+                    (validationParams.roundNumber % INIT_EPOCH)
+            ) {
+                setLookup(next);
+                currentValidators = Validators({
+                    set: next,
+                    threshold: int256((next.length * 2 * 100) / 3)
+                });
             }
 
             // Store subnet header

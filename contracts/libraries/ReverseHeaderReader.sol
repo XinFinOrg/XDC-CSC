@@ -154,27 +154,46 @@ library ReverseHeaderReader {
             );
     }
 
+    function parseAddresses(
+        bytes memory data
+    ) public pure returns (address[] memory) {
+        uint256 numberOfAddresses = data.length / 20;
+        address[] memory addresses = new address[](numberOfAddresses);
+
+        uint256 dataIndex = 0;
+        for (uint256 i = 0; i < numberOfAddresses; i++) {
+            address addr;
+            assembly {
+                addr := mload(add(data, add(20, dataIndex)))
+            }
+            addresses[i] = addr;
+            dataIndex += 20;
+        }
+
+        return addresses;
+    }
+
     /*
      * @param rlp-encoded block header.
      * @return (currentValidator list, nextValidator list).
      */
     function getEpoch(
         bytes memory header
-    ) internal pure returns (address[] memory current, address[] memory next) {
+    ) internal pure returns (address[] memory next) {
         RLPItem[] memory ls = toList(toRlpItem(header));
-        RLPItem[] memory list0 = toList(ls[16]);
-        if (list0.length > 0) {
-            current = new address[](list0.length);
-            for (uint256 i = 0; i < list0.length; i++) {
-                current[i] = toAddress(list0[i]);
-            }
-        }
-        RLPItem[] memory list1 = toList(ls[15]);
 
+        address[] memory list1 = parseAddresses(toBytes(ls[15]));
         if (list1.length > 0) {
-            next = new address[](list1.length);
+            address[] memory penalty = parseAddresses(toBytes(ls[17]));
+
+            next = new address[](list1.length - penalty.length);
+            uint256 counter = 0;
             for (uint256 i = 0; i < list1.length; i++) {
-                next[i] = toAddress(list1[i]);
+                address temp = list1[i];
+                if (!addressExist(penalty, temp)) {
+                    next[counter] = temp;
+                    counter++;
+                }
             }
         }
     }
