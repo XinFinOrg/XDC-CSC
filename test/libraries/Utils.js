@@ -100,7 +100,7 @@ const getSigs = (voteForSignHash, validators, sigNum) => {
   return sigs;
 };
 
-const composeAndSignBlock = (
+const composeAndSignBlockSubnet = (
   number,
   round_num,
   prn,
@@ -177,6 +177,81 @@ const composeAndSignBlock = (
 
   return [block, encoded(blockBuffer), hash(blockBuffer)];
 };
+
+const composeAndSignBlockMainnet = (
+  number,
+  round_num,
+  prn,
+  parent_hash,
+  validators,
+  threshold,
+  next = [],
+  penalties = []
+) => {
+  const version = new Uint8Array([2]);
+  const voteForSignHash = ethers.utils.keccak256(
+    Buffer.from(RLP.encode([[parent_hash, prn, number - 1], 0]))
+  );
+
+  const sigs = getSigs(voteForSignHash, validators, threshold);
+
+  var block = {
+    parentHash: parent_hash,
+    uncleHash:
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    coinbase:
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    root: "0x0000000000000000000000000000000000000000000000000000000000000000",
+    txHash:
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    receiptAddress:
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    bloom: new Uint8Array(256),
+    difficulty: 0,
+    number: number,
+    gasLimit: 0,
+    gasUsed: 0,
+    time: 0,
+    extra: new Uint8Array([
+      ...version,
+      ...RLP.encode([round_num, [[parent_hash, prn, number - 1], sigs, 0]]),
+    ]),
+    mixHash:
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    nonce: new Uint8Array(8),
+    validators: next,
+    validator: new Uint8Array(8),
+    penalties: penalties,
+  };
+
+  var blockBuffer = Buffer.from(
+    RLP.encode([
+      util.toBytes(parent_hash),
+      util.zeros(32),
+      util.zeros(32),
+      util.zeros(32),
+      util.zeros(32),
+      util.zeros(32),
+      new Uint8Array(256),
+      util.bigIntToUnpaddedBytes(0),
+      util.bigIntToUnpaddedBytes(number),
+      util.bigIntToUnpaddedBytes(0),
+      util.bigIntToUnpaddedBytes(0),
+      util.bigIntToUnpaddedBytes(0),
+      new Uint8Array([
+        ...version,
+        ...RLP.encode([round_num, [[parent_hash, prn, number - 1], sigs, 0]]),
+      ]),
+      util.zeros(32),
+      new Uint8Array(8),
+      next,
+      new Uint8Array(8),
+      penalties,
+    ])
+  );
+
+  return [block, encoded(blockBuffer), hash(blockBuffer)];
+};
 function createValidators(num) {
   const validators = [];
   for (let i = 0; i < num; i++) {
@@ -192,6 +267,7 @@ module.exports = {
   getGenesis,
   hash,
   encoded,
-  composeAndSignBlock,
+  composeAndSignBlockSubnet,
   blockToHash,
+  composeAndSignBlockMainnet,
 };

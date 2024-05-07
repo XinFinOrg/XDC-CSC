@@ -10,7 +10,7 @@ const {
   hash,
   encoded,
   getSigs,
-  composeAndSignBlock,
+  composeAndSignBlockMainnet,
   createValidators,
 } = require("./libraries/Utils");
 
@@ -151,7 +151,7 @@ describe("reverse full checkpoint", () => {
     const block0 = getGenesis(customValidators);
     const block0Hash = hash(block0);
     const block0Encoded = encoded(block0);
-    const [block1, block1Encoded, block1Hash] = composeAndSignBlock(
+    const [block1, block1Encoded, block1Hash] = composeAndSignBlockMainnet(
       1,
       1,
       0,
@@ -224,8 +224,14 @@ describe("reverse full checkpoint", () => {
       expect(latestBlocks[1].hash).to.eq(block7074002Hash);
     });
     it("should mainnet num submit", async () => {
-      await checkpoint.receiveHeader([block7074002Encoded, block7074003Encoded]);
-      await checkpoint.receiveHeader([block7074004Encoded, block7074005Encoded]);
+      await checkpoint.receiveHeader([
+        block7074002Encoded,
+        block7074003Encoded,
+      ]);
+      await checkpoint.receiveHeader([
+        block7074004Encoded,
+        block7074005Encoded,
+      ]);
 
       const block7074002Hash = blockToHash(block7074002Encoded);
       const block7074003Hash = blockToHash(block7074003Encoded);
@@ -240,366 +246,366 @@ describe("reverse full checkpoint", () => {
     });
   });
 
-  //   describe("test checkpoint custom block data", () => {
-  //     it("should receive new header", async () => {
-  //       const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
-  //         2,
-  //         2,
-  //         1,
-  //         customeBlock1["hash"],
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       await custom.receiveHeader([block2Encoded]);
+  describe("test checkpoint custom block data", () => {
+    it("should receive new header", async () => {
+      const [block2, block2Encoded, block2Hash] = composeAndSignBlockMainnet(
+        2,
+        2,
+        1,
+        customeBlock1["hash"],
+        customValidators,
+        2,
+        [],
+        []
+      );
+      await custom.receiveHeader([block2Encoded]);
 
-  //       const block2Resp = await custom.getHeader(block2Hash);
-  //       const latestBlocks = await custom.getLatestBlocks();
+      const block2Resp = await custom.getHeader(block2Hash);
+      const latestBlocks = await custom.getLatestBlocks();
 
-  //       expect(block2Resp.finalized).to.eq(false);
+      expect(block2Resp.finalized).to.eq(false);
 
-  //       expect(latestBlocks[0].hash).to.eq(block2Hash);
-  //     });
-  //     it("should confirm a received block", async () => {
-  //       const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
-  //         2,
-  //         2,
-  //         1,
-  //         customeBlock1["hash"],
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block3, block3Encoded, block3Hash] = composeAndSignBlock(
-  //         3,
-  //         3,
-  //         2,
-  //         block2Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block4, block4Encoded, block4Hash] = composeAndSignBlock(
-  //         4,
-  //         4,
-  //         3,
-  //         block3Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block5, block5Encoded, block5Hash] = composeAndSignBlock(
-  //         5,
-  //         5,
-  //         4,
-  //         block4Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       await custom.receiveHeader([block2Encoded, block3Encoded]);
-  //       await custom.receiveHeader([block4Encoded, block5Encoded]);
+      expect(latestBlocks[0].hash).to.eq(block2Hash);
+    });
+    it("should confirm a received block", async () => {
+      const [block2, block2Encoded, block2Hash] = composeAndSignBlockMainnet(
+        2,
+        2,
+        1,
+        customeBlock1["hash"],
+        customValidators,
+        2,
+        [],
+        []
+      );
+      const [block3, block3Encoded, block3Hash] = composeAndSignBlockMainnet(
+        3,
+        3,
+        2,
+        block2Hash,
+        customValidators,
+        2,
+        [],
+        []
+      );
+      const [block4, block4Encoded, block4Hash] = composeAndSignBlockMainnet(
+        4,
+        4,
+        3,
+        block3Hash,
+        customValidators,
+        2,
+        [],
+        []
+      );
+      const [block5, block5Encoded, block5Hash] = composeAndSignBlockMainnet(
+        5,
+        5,
+        4,
+        block4Hash,
+        customValidators,
+        2,
+        [],
+        []
+      );
+      await custom.receiveHeader([block2Encoded, block3Encoded]);
+      await custom.receiveHeader([block4Encoded, block5Encoded]);
 
-  //       const block2Resp = await custom.getHeader(block2Hash);
-  //       const latestBlocks = await custom.getLatestBlocks();
+      const block2Resp = await custom.getHeader(block2Hash);
+      const latestBlocks = await custom.getLatestBlocks();
 
-  //       expect(block2Resp.finalized).to.eq(true);
-  //       expect(latestBlocks[0].hash).to.eq(block5Hash);
-  //       expect(latestBlocks[1].hash).to.eq(block2Hash);
-  //     });
-  //     it("should switch a validator set", async () => {
-  //       const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
-  //         2,
-  //         2,
-  //         1,
-  //         customeBlock1["hash"],
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block3, block3Encoded, block3Hash] = composeAndSignBlock(
-  //         3,
-  //         3,
-  //         2,
-  //         block2Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block4, block4Encoded, block4Hash] = composeAndSignBlock(
-  //         4,
-  //         4,
-  //         3,
-  //         block3Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block5, block5Encoded, block5Hash] = composeAndSignBlock(
-  //         5,
-  //         5,
-  //         4,
-  //         block4Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
+      expect(block2Resp.finalized).to.eq(true);
+      expect(latestBlocks[0].hash).to.eq(block5Hash);
+      expect(latestBlocks[1].hash).to.eq(block2Hash);
+    });
+    it("should switch a validator set", async () => {
+      const [block2, block2Encoded, block2Hash] = composeAndSignBlockMainnet(
+        2,
+        2,
+        1,
+        customeBlock1["hash"],
+        customValidators,
+        2,
+        [],
+        []
+      );
+      const [block3, block3Encoded, block3Hash] = composeAndSignBlockMainnet(
+        3,
+        3,
+        2,
+        block2Hash,
+        customValidators,
+        2,
+        [],
+        []
+      );
+      const [block4, block4Encoded, block4Hash] = composeAndSignBlockMainnet(
+        4,
+        4,
+        3,
+        block3Hash,
+        customValidators,
+        2,
+        [],
+        []
+      );
+      const [block5, block5Encoded, block5Hash] = composeAndSignBlockMainnet(
+        5,
+        5,
+        4,
+        block4Hash,
+        customValidators,
+        2,
+        [],
+        []
+      );
 
-  //       const next = createValidators(3);
+      const [block6, block6Encoded, block6Hash] = composeAndSignBlockMainnet(
+        6,
+        6,
+        5,
+        block5Hash,
+        customValidators,
+        2,
+        [],
+        []
+      );
+      const [block7, block7Encoded, block7Hash] = composeAndSignBlockMainnet(
+        7,
+        7,
+        6,
+        block6Hash,
+        customValidators,
+        2,
+        [],
+        []
+      );
+      const [block8, block8Encoded, block8Hash] = composeAndSignBlockMainnet(
+        8,
+        8,
+        7,
+        block7Hash,
+        customValidators,
+        2,
+        [],
+        []
+      );
+      const [block9, block9Encoded, block9Hash] = composeAndSignBlockMainnet(
+        9,
+        9,
+        8,
+        block8Hash,
+        customValidators,
+        2,
+        [],
+        []
+      );
+      const next = createValidators(3);
+      
+      const [block10, block10Encoded, block10Hash] = composeAndSignBlockMainnet(
+        10,
+        10,
+        9,
+        block9Hash,
+        customValidators,
+        2,
+        next.map((item) => item.address),
+        []
+      );
+      await custom.receiveHeader([block2Encoded, block3Encoded, block4Encoded]);
 
-  //       const [block6, block6Encoded, block6Hash] = composeAndSignBlock(
-  //         6,
-  //         6,
-  //         5,
-  //         block5Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         next.map((item) => item.address)
-  //       );
-  //       const [block7, block7Encoded, block7Hash] = composeAndSignBlock(
-  //         7,
-  //         7,
-  //         6,
-  //         block6Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block8, block8Encoded, block8Hash] = composeAndSignBlock(
-  //         8,
-  //         8,
-  //         7,
-  //         block7Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block9, block9Encoded, block9Hash] = composeAndSignBlock(
-  //         9,
-  //         9,
-  //         8,
-  //         block8Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block10, block10Encoded, block10Hash] = composeAndSignBlock(
-  //         10,
-  //         10,
-  //         9,
-  //         block9Hash,
-  //         customValidators,
-  //         2,
-  //         next.map((item) => item.address),
-  //         []
-  //       );
-  //       await custom.receiveHeader([block2Encoded, block3Encoded, block4Encoded]);
+      await custom.receiveHeader([block5Encoded, block6Encoded, block7Encoded]);
 
-  //       await custom.receiveHeader([block5Encoded, block6Encoded, block7Encoded]);
+      await custom.receiveHeader([
+        block8Encoded,
+        block9Encoded,
+        block10Encoded,
+      ]);
 
-  //       await custom.receiveHeader([
-  //         block8Encoded,
-  //         block9Encoded,
-  //         block10Encoded,
-  //       ]);
+      const block7Resp = await custom.getHeader(block7Hash);
 
-  //       const block7Resp = await custom.getHeader(block7Hash);
+      expect(block7Resp.parentHash).to.eq(block6Hash);
+      expect(block7Resp.number).to.eq(7);
+      expect(block7Resp.roundNum).to.eq(7);
+      expect(block7Resp.finalized).to.eq(true);
+      const latestBlocks = await custom.getLatestBlocks();
+      expect(latestBlocks[0].hash).to.eq(block10Hash);
+      expect(latestBlocks[1].hash).to.eq(block7Hash);
 
-  //       expect(block7Resp.parentHash).to.eq(block6Hash);
-  //       expect(block7Resp.number).to.eq(7);
-  //       expect(block7Resp.roundNum).to.eq(7);
-  //       expect(block7Resp.finalized).to.eq(true);
-  //       const latestBlocks = await custom.getLatestBlocks();
-  //       expect(latestBlocks[0].hash).to.eq(block10Hash);
-  //       expect(latestBlocks[1].hash).to.eq(block7Hash);
+      const blockHeader7Resp = await custom.getHeaderByNumber(7);
 
-  //       const blockHeader7Resp = await custom.getHeaderByNumber(7);
+      expect(blockHeader7Resp.hash).to.eq(block7Hash);
+      expect(blockHeader7Resp.number).to.eq(7);
 
-  //       expect(blockHeader7Resp.hash).to.eq(block7Hash);
-  //       expect(blockHeader7Resp.number).to.eq(7);
+      const blockHeader8Resp = await custom.getHeaderByNumber(8);
+      expect(blockHeader8Resp.hash).to.eq(block8Hash);
+      expect(blockHeader8Resp.number).to.eq(8);
 
-  //       const blockHeader8Resp = await custom.getHeaderByNumber(8);
-  //       expect(blockHeader8Resp.hash).to.eq(block8Hash);
-  //       expect(blockHeader8Resp.number).to.eq(8);
+      const currentValidators = await custom.getCurrentValidators();
+      expect(currentValidators[0]).to.deep.eq(next.map((item) => item.address));
+    });
 
-  //       const currentValidators = await custom.getCurrentValidators();
-  //       expect(currentValidators[0]).to.deep.eq(next.map((item) => item.address));
-  //     });
+    // it("should penalty validitor verify", async () => {
+    //   const [block2, block2Encoded, block2Hash] = composeAndSignBlockMainnet(
+    //     2,
+    //     2,
+    //     1,
+    //     customeBlock1["hash"],
+    //     customValidators,
+    //     2,
+    //     [],
+    //     []
+    //   );
+    //   const [block3, block3Encoded, block3Hash] = composeAndSignBlockMainnet(
+    //     3,
+    //     3,
+    //     2,
+    //     block2Hash,
+    //     customValidators,
+    //     2,
+    //     [],
+    //     []
+    //   );
+    //   const [block4, block4Encoded, block4Hash] = composeAndSignBlockMainnet(
+    //     4,
+    //     4,
+    //     3,
+    //     block3Hash,
+    //     customValidators,
+    //     2,
+    //     [],
+    //     []
+    //   );
+    //   const [block5, block5Encoded, block5Hash] = composeAndSignBlockMainnet(
+    //     5,
+    //     5,
+    //     4,
+    //     block4Hash,
+    //     customValidators,
+    //     2,
+    //     [],
+    //     []
+    //   );
+    //   const next = createValidators(5);
+    //   const penalties = [next[0], next[1]];
+    //   const actualValidators = [next[2], next[3], next[4]];
 
-  //     it("should penalty validitor verify", async () => {
-  //       const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
-  //         2,
-  //         2,
-  //         1,
-  //         customeBlock1["hash"],
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block3, block3Encoded, block3Hash] = composeAndSignBlock(
-  //         3,
-  //         3,
-  //         2,
-  //         block2Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block4, block4Encoded, block4Hash] = composeAndSignBlock(
-  //         4,
-  //         4,
-  //         3,
-  //         block3Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block5, block5Encoded, block5Hash] = composeAndSignBlock(
-  //         5,
-  //         5,
-  //         4,
-  //         block4Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const next = createValidators(5);
-  //       const penalties = [next[0], next[1]];
-  //       const actualValidators = [next[2], next[3], next[4]];
+    //   const [block6, block6Encoded, block6Hash] = composeAndSignBlockMainnet(
+    //     6,
+    //     6,
+    //     5,
+    //     block5Hash,
+    //     customValidators,
+    //     2,
+    //     [],
+    //     next.map((item) => item.address),
+    //     penalties.map((item) => item.address)
+    //   );
+    //   const [block7, block7Encoded, block7Hash] = composeAndSignBlockMainnet(
+    //     7,
+    //     7,
+    //     6,
+    //     block6Hash,
+    //     customValidators,
+    //     2,
+    //     [],
+    //     []
+    //   );
+    //   const [block8, block8Encoded, block8Hash] = composeAndSignBlockMainnet(
+    //     8,
+    //     8,
+    //     7,
+    //     block7Hash,
+    //     customValidators,
+    //     2,
+    //     [],
+    //     []
+    //   );
+    //   const [block9, block9Encoded, block9Hash] = composeAndSignBlockMainnet(
+    //     9,
+    //     9,
+    //     8,
+    //     block8Hash,
+    //     customValidators,
+    //     2,
+    //     [],
+    //     []
+    //   );
+    //   const [block10, block10Encoded, block10Hash] = composeAndSignBlockMainnet(
+    //     10,
+    //     10,
+    //     9,
+    //     block9Hash,
+    //     customValidators,
+    //     2,
+    //     actualValidators.map((item) => item.address),
+    //     []
+    //   );
+    //   await custom.receiveHeader([block2Encoded, block3Encoded, block4Encoded]);
 
-  //       const [block6, block6Encoded, block6Hash] = composeAndSignBlock(
-  //         6,
-  //         6,
-  //         5,
-  //         block5Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         next.map((item) => item.address),
-  //         penalties.map((item) => item.address)
-  //       );
-  //       const [block7, block7Encoded, block7Hash] = composeAndSignBlock(
-  //         7,
-  //         7,
-  //         6,
-  //         block6Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block8, block8Encoded, block8Hash] = composeAndSignBlock(
-  //         8,
-  //         8,
-  //         7,
-  //         block7Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block9, block9Encoded, block9Hash] = composeAndSignBlock(
-  //         9,
-  //         9,
-  //         8,
-  //         block8Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block10, block10Encoded, block10Hash] = composeAndSignBlock(
-  //         10,
-  //         10,
-  //         9,
-  //         block9Hash,
-  //         customValidators,
-  //         2,
-  //         actualValidators.map((item) => item.address),
-  //         []
-  //       );
-  //       await custom.receiveHeader([block2Encoded, block3Encoded, block4Encoded]);
+    //   await custom.receiveHeader([block5Encoded, block6Encoded, block7Encoded]);
 
-  //       await custom.receiveHeader([block5Encoded, block6Encoded, block7Encoded]);
+    //   await custom.receiveHeader([
+    //     block8Encoded,
+    //     block9Encoded,
+    //     block10Encoded,
+    //   ]);
+    //   const currentValidators = await custom.getCurrentValidators();
+    //   expect(currentValidators[0]).to.deep.eq(
+    //     actualValidators.map((item) => item.address)
+    //   );
+    // });
+    // it("should mainnet num submit", async () => {
+    //   const [block2, block2Encoded, block2Hash] = composeAndSignBlockMainnet(
+    //     2,
+    //     2,
+    //     1,
+    //     customeBlock1["hash"],
+    //     customValidators,
+    //     2,
+    //     [],
+    //     []
+    //   );
+    //   const [block3, block3Encoded, block3Hash] = composeAndSignBlockMainnet(
+    //     3,
+    //     3,
+    //     2,
+    //     block2Hash,
+    //     customValidators,
+    //     2,
+    //     [],
+    //     []
+    //   );
+    //   const [block4, block4Encoded, block4Hash] = composeAndSignBlockMainnet(
+    //     4,
+    //     4,
+    //     3,
+    //     block3Hash,
+    //     customValidators,
+    //     2,
+    //     [],
+    //     []
+    //   );
+    //   const [block5, block5Encoded, block5Hash] = composeAndSignBlockMainnet(
+    //     5,
+    //     5,
+    //     4,
+    //     block4Hash,
+    //     customValidators,
+    //     2,
+    //     [],
+    //     []
+    //   );
+    //   await custom.receiveHeader([block2Encoded, block3Encoded]);
+    //   await custom.receiveHeader([block4Encoded, block5Encoded]);
 
-  //       await custom.receiveHeader([
-  //         block8Encoded,
-  //         block9Encoded,
-  //         block10Encoded,
-  //       ]);
-  //       const currentValidators = await custom.getCurrentValidators();
-  //       expect(currentValidators[0]).to.deep.eq(
-  //         actualValidators.map((item) => item.address)
-  //       );
-  //     });
-  //     it("should mainnet num submit", async () => {
-  //       const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
-  //         2,
-  //         2,
-  //         1,
-  //         customeBlock1["hash"],
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block3, block3Encoded, block3Hash] = composeAndSignBlock(
-  //         3,
-  //         3,
-  //         2,
-  //         block2Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block4, block4Encoded, block4Hash] = composeAndSignBlock(
-  //         4,
-  //         4,
-  //         3,
-  //         block3Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       const [block5, block5Encoded, block5Hash] = composeAndSignBlock(
-  //         5,
-  //         5,
-  //         4,
-  //         block4Hash,
-  //         customValidators,
-  //         2,
-  //         [],
-  //         []
-  //       );
-  //       await custom.receiveHeader([block2Encoded, block3Encoded]);
-  //       await custom.receiveHeader([block4Encoded, block5Encoded]);
-
-  //       const block2Resp = await custom.getHeader(block2Hash);
-  //       expect(block2Resp.number).to.eq(2);
-  //       expect(block2Resp.roundNum).to.eq(2);
-  //       expect(block2Resp.mainnetNum).to.not.eq(-1);
-  //       expect(block2Resp.finalized).to.eq(true);
-  //       const block3Resp = await custom.getHeader(block3Hash);
-  //       expect(block3Resp.mainnetNum).to.eq(-1);
-  //     });
-  //   });
+    //   const block2Resp = await custom.getHeader(block2Hash);
+    //   expect(block2Resp.number).to.eq(2);
+    //   expect(block2Resp.roundNum).to.eq(2);
+    //   expect(block2Resp.mainnetNum).to.not.eq(-1);
+    //   expect(block2Resp.finalized).to.eq(true);
+    //   const block3Resp = await custom.getHeader(block3Hash);
+    //   expect(block3Resp.mainnetNum).to.eq(-1);
+    // });
+  });
 });
