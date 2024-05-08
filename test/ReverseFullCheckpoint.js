@@ -401,7 +401,7 @@ describe("reverse full checkpoint", () => {
         []
       );
       const next = createValidators(3);
-      
+
       const [block10, block10Encoded, block10Hash] = composeAndSignBlockMainnet(
         10,
         10,
@@ -442,6 +442,7 @@ describe("reverse full checkpoint", () => {
       expect(blockHeader8Resp.number).to.eq(8);
 
       const currentValidators = await custom.getCurrentValidators();
+
       expect(currentValidators[0]).to.deep.eq(next.map((item) => item.address));
     });
 

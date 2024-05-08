@@ -196,6 +196,7 @@ contract ReverseFullCheckpoint {
                     (validationParams.roundNumber % INIT_EPOCH)
             ) {
                 setLookup(next);
+
                 currentValidators = Validators({
                     set: next,
                     threshold: int256((next.length * 2 * 100) / 3)

@@ -178,6 +178,31 @@ const composeAndSignBlockSubnet = (
   return [block, encoded(blockBuffer), hash(blockBuffer)];
 };
 
+function hexStringToUint8Array(hexString) {
+  // 去掉十六进制字符串的 "0x" 前缀
+  if (hexString.substring(0, 2) === "0x") {
+    hexString = hexString.substring(2);
+  }
+
+  // 将每两个字符解析为一个字节
+  const uint8Array = new Uint8Array(hexString.length / 2);
+  for (let i = 0; i < hexString.length; i += 2) {
+    uint8Array[i / 2] = parseInt(hexString.substring(i, i + 2), 16);
+  }
+  return uint8Array;
+}
+
+function arrayToUint8Array(array) {
+  const uint8Arrays = array.map(hexStringToUint8Array);
+  const mergedUint8Array = uint8Arrays.reduce((acc, curr) => {
+    const merged = new Uint8Array(acc.length + curr.length);
+    merged.set(acc, 0);
+    merged.set(curr, acc.length);
+    return merged;
+  }, new Uint8Array(0));
+  return mergedUint8Array;
+}
+
 const composeAndSignBlockMainnet = (
   number,
   round_num,
@@ -219,9 +244,9 @@ const composeAndSignBlockMainnet = (
     mixHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
     nonce: new Uint8Array(8),
-    validators: next,
+    validators: arrayToUint8Array(next),
     validator: new Uint8Array(8),
-    penalties: penalties,
+    penalties: arrayToUint8Array(penalties),
   };
 
   var blockBuffer = Buffer.from(
@@ -244,9 +269,9 @@ const composeAndSignBlockMainnet = (
       ]),
       util.zeros(32),
       new Uint8Array(8),
-      next,
+      arrayToUint8Array(next),
       new Uint8Array(8),
-      penalties,
+      arrayToUint8Array(penalties),
     ])
   );
 
