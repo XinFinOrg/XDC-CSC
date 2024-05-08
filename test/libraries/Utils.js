@@ -179,12 +179,10 @@ const composeAndSignBlockSubnet = (
 };
 
 function hexStringToUint8Array(hexString) {
-  // 去掉十六进制字符串的 "0x" 前缀
   if (hexString.substring(0, 2) === "0x") {
     hexString = hexString.substring(2);
   }
 
-  // 将每两个字符解析为一个字节
   const uint8Array = new Uint8Array(hexString.length / 2);
   for (let i = 0; i < hexString.length; i += 2) {
     uint8Array[i / 2] = parseInt(hexString.substring(i, i + 2), 16);
