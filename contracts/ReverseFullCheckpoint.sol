@@ -44,7 +44,6 @@ contract ReverseFullCheckpoint {
 
     uint64 private epochNum;
     uint64 public INIT_STATUS;
-    uint64 public INIT_GAP;
     uint64 public INIT_EPOCH;
 
     // Event types
@@ -55,7 +54,6 @@ contract ReverseFullCheckpoint {
         address[] memory initialValidatorSet,
         bytes memory genesisHeader,
         bytes memory block1Header,
-        uint64 initGap,
         uint64 initEpoch,
         int256 V2ESBN
     ) public {
@@ -105,7 +103,6 @@ contract ReverseFullCheckpoint {
         latestFinalizedBlock = block1HeaderHash;
         committedBlocks[0] = genesisHeaderHash;
         committedBlocks[1] = block1HeaderHash;
-        INIT_GAP = initGap;
         INIT_EPOCH = initEpoch;
         INIT_STATUS = 1;
     }
