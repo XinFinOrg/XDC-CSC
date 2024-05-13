@@ -28,7 +28,7 @@ async function main() {
     data1Encoded,
     parentnetDeploy["gap"],
     parentnetDeploy["epoch"],
-    parentnetDeploy["swtichV2"]
+    parentnetDeploy["initV2Epoch"]
   );
   await tx.wait();
   console.log("full checkpoint deployed to:", full.address);

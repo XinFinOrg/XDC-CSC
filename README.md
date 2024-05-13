@@ -32,9 +32,15 @@ We recommend setting up the contract in a Python virtual environment since it ut
 
    Complete the fields in `deployment.config.json`:
 
-   - `validators`: List of initial validator addresses
-   - `gap`: GAP block number on the public chain
-   - `epoch`: EPOCH block number on the public chain
+   - `subnet`: subnet deploy config :
+      - `validators`: List of initial validator addresses
+      - `gap`: GAP block number on the public chain
+      - `epoch`: EPOCH block number on the public chain
+   - `parentnet`: subnet deploy config :
+      - `validators`: List of initial validator addresses   
+      - `gap`: GAP block number on the public chain
+      - `epoch`: EPOCH block number on the public chain
+      - `initV2Epoch`: init v2 epoch number
 
    Configure your network in `network.config.json`:
 
