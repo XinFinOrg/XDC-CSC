@@ -67,6 +67,12 @@ Deploy the contract and obtain the deployed contract address as follows:
    npx hardhat run scripts/LiteCheckpointDeploy.js --network xdcparentnet
    ```
 
+2. **Reverse Full Checkpoint Deployment**
+
+   ```shell
+   npx hardhat run scripts/ReverseFullCheckpointDeploy.js --network xdcsubnet
+   ```
+
 ## Additional Commands
 
 For further assistance or to execute other operations, utilize the commands below:
