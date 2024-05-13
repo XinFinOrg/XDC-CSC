@@ -40,7 +40,7 @@ We recommend setting up the contract in a Python virtual environment since it ut
       - `validators`: List of initial validator addresses   
       - `gap`: GAP block number on the public chain
       - `epoch`: EPOCH block number on the public chain
-      - `initV2Epoch`: init v2 epoch number
+      - `V2ESBN`: v2 epoch start block number, epoch block required
 
    Configure your network in `network.config.json`:
 

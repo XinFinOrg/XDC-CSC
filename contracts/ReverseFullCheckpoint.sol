@@ -57,7 +57,7 @@ contract ReverseFullCheckpoint {
         bytes memory block1Header,
         uint64 initGap,
         uint64 initEpoch,
-        int256 initV2Epoch
+        int256 V2ESBN
     ) public {
         require(INIT_STATUS == 0, "Already init");
         require(initialValidatorSet.length > 0, "Validator Empty");
@@ -76,7 +76,7 @@ contract ReverseFullCheckpoint {
             .getValidationParams(block1Header);
 
         require(
-            n == initV2Epoch && block1.number == initV2Epoch + 1,
+            n == V2ESBN && block1.number == V2ESBN + 1,
             "Invalid Init Block"
         );
         headerTree[genesisHeaderHash] = Header({
