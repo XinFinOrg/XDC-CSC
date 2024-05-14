@@ -26,7 +26,6 @@ async function main() {
     parentnetDeploy["validators"],
     data0Encoded,
     data1Encoded,
-    parentnetDeploy["gap"],
     parentnetDeploy["epoch"],
     parentnetDeploy["V2ESBN"]
   );
