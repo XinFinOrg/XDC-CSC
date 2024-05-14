@@ -45,6 +45,7 @@ contract ReverseFullCheckpoint {
     uint64 private epochNum;
     uint64 public INIT_STATUS;
     uint64 public INIT_EPOCH;
+    uint64 public INIT_V2ESBN;
 
     // Event types
     event SubnetBlockAccepted(bytes32 blockHash, int256 number);
@@ -89,6 +90,7 @@ contract ReverseFullCheckpoint {
         committedBlocks[v2esbn] = v2esbnHeaderHash;
         INIT_EPOCH = initEpoch;
         INIT_STATUS = 1;
+        INIT_V2ESBN = uint64(int64(v2esbn));
     }
 
     /*
