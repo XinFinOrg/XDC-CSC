@@ -31,7 +31,7 @@ async function main() {
     parentnetDeploy["v2esbn"]
   );
   await tx.wait();
-  console.log("full checkpoint deployed to:", full.address);
+  console.log("reverse full checkpoint deployed to:", full.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
