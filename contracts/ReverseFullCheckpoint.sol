@@ -63,25 +63,25 @@ contract ReverseFullCheckpoint {
 
         require(next.length > 0, "No Epoch Validator Empty");
 
-        HeaderReader.ValidationParams memory block1 = HeaderReader
+        HeaderReader.ValidationParams memory v2esbnBlock = HeaderReader
             .getValidationParams(v2esbnHeader);
 
-        require(block1.number == v2esbn, "Invalid Init Block");
+        require(v2esbnBlock.number == v2esbn, "Invalid Init Block");
 
         headerTree[v2esbnHeaderHash] = Header({
-            receiptRoot: block1.receiptRoot,
-            stateRoot: block1.stateRoot,
-            transactionsRoot: block1.transactionsRoot,
-            parentHash: block1.parentHash,
-            mix: (uint256(block1.number) << 128) |
-                (uint256(block1.roundNumber) << 64) |
+            receiptRoot: v2esbnBlock.receiptRoot,
+            stateRoot: v2esbnBlock.stateRoot,
+            transactionsRoot: v2esbnBlock.transactionsRoot,
+            parentHash: v2esbnBlock.parentHash,
+            mix: (uint256(v2esbnBlock.number) << 128) |
+                (uint256(v2esbnBlock.roundNumber) << 64) |
                 uint256(block.number)
         });
-        validators[1] = Validators({
+        validators[v2esbn] = Validators({
             set: next,
             threshold: int256((next.length * 2 * 100) / 3)
         });
-        currentValidators = validators[1];
+        currentValidators = validators[v2esbn];
         setLookup(next);
         latestBlock = v2esbnHeaderHash;
         latestFinalizedBlock = v2esbnHeaderHash;
@@ -178,10 +178,12 @@ contract ReverseFullCheckpoint {
             ) {
                 setLookup(next);
 
-                currentValidators = Validators({
+                validators[validationParams.number] = Validators({
                     set: next,
                     threshold: int256((next.length * 2 * 100) / 3)
                 });
+
+                currentValidators = validators[validationParams.number];
             }
 
             // Store subnet header
