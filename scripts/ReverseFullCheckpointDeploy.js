@@ -2,9 +2,10 @@ const hre = require("hardhat");
 const deploy = require("../deployment.config.json");
 const parentnet = require("./utils/parentnet");
 async function main() {
-  const { data0Encoded, data1Encoded } = await parentnet.data();
-
   const parentnetDeploy = deploy["parentnet"];
+  const { data0Encoded, data1Encoded } = await parentnet.data(
+    parentnetDeploy["v2esbn"]
+  );
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(
     "ReverseFullCheckpoint"

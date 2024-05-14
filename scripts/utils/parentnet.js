@@ -15,17 +15,18 @@ function base64ToHex(base64String) {
   return hexString;
 }
 
-async function data() {
+async function data(v2esbn) {
+  console.log(v2esbn);
   const block0 = {
     jsonrpc: "2.0",
     method: "XDPoS_getV2BlockByNumber",
-    params: ["0x6BF0D0"],
+    params: ["0x" + Number(v2esbn).toString(16)],
     id: 1,
   };
   const block1 = {
     jsonrpc: "2.0",
     method: "XDPoS_getV2BlockByNumber",
-    params: ["0x6BF0D1"],
+    params: ["0x" + Number(v2esbn + 1).toString(16)],
     id: 1,
   };
   let data0;
