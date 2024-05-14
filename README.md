@@ -39,7 +39,7 @@ We recommend setting up the contract in a Python virtual environment since it ut
    - `parentnet`: Subnet deploy config :
       - `validators`: List of initial validator addresses   
       - `epoch`: Blocks per epoch on the public chain
-      - `V2ESBN`: V2 epoch start block number, epoch block required
+      - `v2esbn`: V2 epoch start block number, epoch block required
 
    Configure your network in `network.config.json`:
 

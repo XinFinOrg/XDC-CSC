@@ -27,7 +27,7 @@ async function main() {
     data0Encoded,
     data1Encoded,
     parentnetDeploy["epoch"],
-    parentnetDeploy["V2ESBN"]
+    parentnetDeploy["v2esbn"]
   );
   await tx.wait();
   console.log("full checkpoint deployed to:", full.address);
