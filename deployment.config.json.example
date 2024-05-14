@@ -11,6 +11,7 @@
     "epoch": 900
   },
   "parentnet": {
-    "epoch": 900
+    "epoch": 900,
+    "v2esbn": 18666757
   }
 }
