@@ -6,6 +6,7 @@ async function main() {
   const { data0Encoded, data1Encoded } = await parentnet.data(
     parentnetDeploy["v2esbn"]
   );
+
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(
     "ReverseFullCheckpoint"
@@ -24,9 +25,7 @@ async function main() {
   await full.deployed();
 
   const tx = await full.init(
-    parentnetDeploy["validators"],
     data0Encoded,
-    data1Encoded,
     parentnetDeploy["epoch"],
     parentnetDeploy["v2esbn"]
   );

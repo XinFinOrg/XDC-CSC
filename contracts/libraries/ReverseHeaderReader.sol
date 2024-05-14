@@ -186,13 +186,18 @@ library ReverseHeaderReader {
         if (list1.length > 0) {
             address[] memory penalty = parseAddresses(toBytes(ls[17]));
 
-            next = new address[](list1.length - penalty.length);
+            next = new address[](list1.length);
             uint256 counter = 0;
             for (uint256 i = 0; i < list1.length; i++) {
                 if (!addressExist(penalty, list1[i])) {
                     next[counter] = list1[i];
                     counter++;
                 }
+            }
+
+            // Resize the array.
+            assembly {
+                mstore(next, counter)
             }
         }
     }

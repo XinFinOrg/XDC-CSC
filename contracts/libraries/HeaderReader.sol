@@ -180,13 +180,17 @@ library HeaderReader {
                 penalty[i] = toAddress(list2[i]);
                 uniqueAddr[i] = penalty[i];
             }
-            next = new address[](list1.length - list2.length);
+            next = new address[](list1.length);
             for (uint256 i = 0; i < list1.length; i++) {
                 address temp = toAddress(list1[i]);
                 if (!addressExist(uniqueAddr, temp)) {
                     next[counter] = temp;
                     counter++;
                 }
+            }
+            // Resize the array.
+            assembly {
+                mstore(next, counter)
             }
         }
     }

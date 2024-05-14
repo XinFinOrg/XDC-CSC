@@ -51,44 +51,24 @@ contract ReverseFullCheckpoint {
     event SubnetBlockFinalized(bytes32 blockHash, int256 number);
 
     function init(
-        address[] memory initialValidatorSet,
-        bytes memory genesisHeader,
-        bytes memory block1Header,
+        bytes memory v2esbnHeader,
         uint64 initEpoch,
         int256 v2esbn
     ) public {
         require(INIT_STATUS == 0, "Already init");
-        require(initialValidatorSet.length > 0, "Validator Empty");
 
-        bytes32 genesisHeaderHash = keccak256(genesisHeader);
-        bytes32 block1HeaderHash = keccak256(block1Header);
-        (
-            bytes32 ph,
-            int256 n,
-            bytes32 stateRoot,
-            bytes32 transactionsRoot,
-            bytes32 receiptRoot
-        ) = HeaderReader.getBlock0Params(genesisHeader);
+        bytes32 v2esbnHeaderHash = keccak256(v2esbnHeader);
 
-        address[] memory next = HeaderReader.getEpoch(genesisHeader);
+        address[] memory next = HeaderReader.getEpoch(v2esbnHeader);
 
-        require(next.length > 0, "No Epoch");
+        require(next.length > 0, "No Epoch Validator Empty");
 
         HeaderReader.ValidationParams memory block1 = HeaderReader
-            .getValidationParams(block1Header);
+            .getValidationParams(v2esbnHeader);
 
-        require(
-            n == v2esbn && block1.number == v2esbn + 1,
-            "Invalid Init Block"
-        );
-        headerTree[genesisHeaderHash] = Header({
-            receiptRoot: receiptRoot,
-            stateRoot: stateRoot,
-            transactionsRoot: transactionsRoot,
-            parentHash: ph,
-            mix: (uint256(n) << 128) | uint256(block.number)
-        });
-        headerTree[block1HeaderHash] = Header({
+        require(block1.number == v2esbn, "Invalid Init Block");
+
+        headerTree[v2esbnHeaderHash] = Header({
             receiptRoot: block1.receiptRoot,
             stateRoot: block1.stateRoot,
             transactionsRoot: block1.transactionsRoot,
@@ -98,15 +78,15 @@ contract ReverseFullCheckpoint {
                 uint256(block.number)
         });
         validators[1] = Validators({
-            set: initialValidatorSet,
-            threshold: int256((initialValidatorSet.length * 2 * 100) / 3)
+            set: next,
+            threshold: int256((next.length * 2 * 100) / 3)
         });
         currentValidators = validators[1];
-        setLookup(initialValidatorSet);
-        latestBlock = block1HeaderHash;
-        latestFinalizedBlock = block1HeaderHash;
-        committedBlocks[0] = genesisHeaderHash;
-        committedBlocks[1] = block1HeaderHash;
+        setLookup(next);
+        latestBlock = v2esbnHeaderHash;
+        latestFinalizedBlock = v2esbnHeaderHash;
+
+        committedBlocks[v2esbn] = v2esbnHeaderHash;
         INIT_EPOCH = initEpoch;
         INIT_STATUS = 1;
     }
