@@ -70,6 +70,10 @@ contract ReverseFullCheckpoint {
             bytes32 receiptRoot
         ) = HeaderReader.getBlock0Params(genesisHeader);
 
+        address[] memory next = HeaderReader.getEpoch(genesisHeader);
+
+        require(next.length > 0, "No Epoch");
+
         HeaderReader.ValidationParams memory block1 = HeaderReader
             .getValidationParams(block1Header);
 
