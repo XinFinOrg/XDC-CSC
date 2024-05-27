@@ -175,7 +175,7 @@ library ReverseHeaderReader {
 
     /*
      * @param rlp-encoded block header.
-     * @return (currentValidator list, nextValidator list).
+     * @return (nextValidator list).
      */
     function getEpoch(
         bytes memory header

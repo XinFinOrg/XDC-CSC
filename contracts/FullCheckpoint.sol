@@ -131,15 +131,16 @@ contract FullCheckpoint {
                     ),
                 "Old Block"
             );
+            Header memory header = headerTree[validationParams.parentHash];
             require(
-                headerTree[validationParams.parentHash].mix != 0,
+                header.mix != 0,
                 "Parent Missing"
             );
             require(
                 int256(
                     uint256(
                         uint64(
-                            headerTree[validationParams.parentHash].mix >> 128
+                            header.mix >> 128
                         )
                     )
                 ) +
@@ -148,12 +149,12 @@ contract FullCheckpoint {
                 "Invalid N"
             );
             require(
-                uint64(headerTree[validationParams.parentHash].mix >> 64) <
+                uint64(header.mix >> 64) <
                     validationParams.roundNumber,
                 "Invalid RN"
             );
             require(
-                uint64(headerTree[validationParams.parentHash].mix >> 64) ==
+                uint64(header.mix >> 64) ==
                     validationParams.prevRoundNumber,
                 "Invalid PRN"
             );

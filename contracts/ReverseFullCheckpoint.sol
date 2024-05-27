@@ -4,7 +4,7 @@ pragma solidity =0.8.19;
 import {ReverseHeaderReader as HeaderReader} from "./libraries/ReverseHeaderReader.sol";
 
 contract ReverseFullCheckpoint {
-    // Compressed subnet header information stored on chain
+    // Compressed mainnet header information stored on chain
     struct Header {
         bytes32 stateRoot;
         bytes32 transactionsRoot;
@@ -118,30 +118,19 @@ contract ReverseFullCheckpoint {
                     ),
                 "Old Block"
             );
+            Header memory header = headerTree[validationParams.parentHash];
+            require(header.mix != 0, "Parent Missing");
             require(
-                headerTree[validationParams.parentHash].mix != 0,
-                "Parent Missing"
-            );
-            require(
-                int256(
-                    uint256(
-                        uint64(
-                            headerTree[validationParams.parentHash].mix >> 128
-                        )
-                    )
-                ) +
-                    1 ==
+                int256(uint256(uint64(header.mix >> 128))) + 1 ==
                     validationParams.number,
                 "Invalid N"
             );
             require(
-                uint64(headerTree[validationParams.parentHash].mix >> 64) <
-                    validationParams.roundNumber,
+                uint64(header.mix >> 64) < validationParams.roundNumber,
                 "Invalid RN"
             );
             require(
-                uint64(headerTree[validationParams.parentHash].mix >> 64) ==
-                    validationParams.prevRoundNumber,
+                uint64(header.mix >> 64) == validationParams.prevRoundNumber,
                 "Invalid PRN"
             );
 
