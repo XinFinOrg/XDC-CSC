@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.8.19;
+pragma solidity =0.8.23;
 
 // HeaderReader is a helper library to read fields out of rlp-encoded blocks.
 // It is mainly consisted of Solidity-RLP(https://github.com/hamdiallam/Solidity-RLP) and
