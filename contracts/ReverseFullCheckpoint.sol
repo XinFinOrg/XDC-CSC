@@ -80,7 +80,7 @@ contract ReverseFullCheckpoint {
         });
         validators[v2esbn] = Validators({
             set: next,
-            threshold: int256((next.length * 2 * 100) / 3)
+            threshold: int256((next.length * 667 ))
         });
         currentValidators = validators[v2esbn];
         setLookup(next);
@@ -157,7 +157,7 @@ contract ReverseFullCheckpoint {
             if (!isUnique) {
                 revert("Repeated Validator");
             }
-            if (uniqueCounter * 100 < currentValidators.threshold) {
+            if (uniqueCounter * 1000 < currentValidators.threshold) {
                 revert("Insufficient Signatures");
             }
 
@@ -171,7 +171,7 @@ contract ReverseFullCheckpoint {
 
                 validators[validationParams.number] = Validators({
                     set: next,
-                    threshold: int256((next.length * 2 * 100) / 3)
+                    threshold: int256((next.length * 667 ))
                 });
 
                 currentValidators = validators[validationParams.number];

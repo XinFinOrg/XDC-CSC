@@ -92,7 +92,7 @@ contract FullCheckpoint {
         });
         validators[1] = Validators({
             set: initialValidatorSet,
-            threshold: int256((initialValidatorSet.length * 2 * 100) / 3)
+            threshold: int256((initialValidatorSet.length * 667 ))
         });
         currentValidators = validators[1];
         setLookup(initialValidatorSet);
@@ -182,7 +182,7 @@ contract FullCheckpoint {
             if (!isUnique) {
                 revert("Repeated Validator");
             }
-            if (uniqueCounter * 100 < currentValidators.threshold) {
+            if (uniqueCounter * 1000 < currentValidators.threshold) {
                 revert("Insufficient Signatures");
             }
 
@@ -240,7 +240,7 @@ contract FullCheckpoint {
 
                     validators[validationParams.number] = Validators({
                         set: next,
-                        threshold: int256((next.length * 2 * 100) / 3)
+                        threshold: int256((next.length * 667 ))
                     });
                 } else revert("Invalid Next Block");
             }
