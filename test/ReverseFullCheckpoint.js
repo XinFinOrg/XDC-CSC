@@ -139,7 +139,7 @@ describe("reverse full checkpoint", () => {
         1,
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -159,7 +159,7 @@ describe("reverse full checkpoint", () => {
         1,
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -169,7 +169,7 @@ describe("reverse full checkpoint", () => {
         2,
         block2Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -179,7 +179,7 @@ describe("reverse full checkpoint", () => {
         3,
         block3Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -189,7 +189,7 @@ describe("reverse full checkpoint", () => {
         4,
         block4Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -210,7 +210,7 @@ describe("reverse full checkpoint", () => {
         1,
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -220,7 +220,7 @@ describe("reverse full checkpoint", () => {
         2,
         block2Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -230,7 +230,7 @@ describe("reverse full checkpoint", () => {
         3,
         block3Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -240,7 +240,7 @@ describe("reverse full checkpoint", () => {
         4,
         block4Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -251,7 +251,7 @@ describe("reverse full checkpoint", () => {
         5,
         block5Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -261,7 +261,7 @@ describe("reverse full checkpoint", () => {
         6,
         block6Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -271,7 +271,7 @@ describe("reverse full checkpoint", () => {
         7,
         block7Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -281,7 +281,7 @@ describe("reverse full checkpoint", () => {
         8,
         block8Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -293,7 +293,7 @@ describe("reverse full checkpoint", () => {
         9,
         block9Hash,
         customValidators,
-        2,
+        3,
         next.map((item) => item.address),
         []
       );
@@ -338,7 +338,7 @@ describe("reverse full checkpoint", () => {
         1,
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -348,7 +348,7 @@ describe("reverse full checkpoint", () => {
         2,
         block2Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -358,7 +358,7 @@ describe("reverse full checkpoint", () => {
         3,
         block3Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -368,7 +368,7 @@ describe("reverse full checkpoint", () => {
         4,
         block4Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -379,7 +379,7 @@ describe("reverse full checkpoint", () => {
         5,
         block5Hash,
         customValidators,
-        2,
+        3,
         [],
         [],
         []
@@ -390,7 +390,7 @@ describe("reverse full checkpoint", () => {
         6,
         block6Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -400,7 +400,7 @@ describe("reverse full checkpoint", () => {
         7,
         block7Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -410,7 +410,7 @@ describe("reverse full checkpoint", () => {
         8,
         block8Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -424,7 +424,7 @@ describe("reverse full checkpoint", () => {
         9,
         block9Hash,
         customValidators,
-        2,
+        3,
         next.map((item) => item.address),
         penalties.map((item) => item.address)
       );
@@ -449,7 +449,7 @@ describe("reverse full checkpoint", () => {
         1,
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -459,7 +459,7 @@ describe("reverse full checkpoint", () => {
         2,
         block2Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -469,7 +469,7 @@ describe("reverse full checkpoint", () => {
         3,
         block3Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -479,7 +479,7 @@ describe("reverse full checkpoint", () => {
         4,
         block4Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );

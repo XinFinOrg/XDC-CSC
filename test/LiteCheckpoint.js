@@ -189,7 +189,7 @@ describe("lite checkpoint", () => {
         //doesn't matter random value, lite not check the value at array 0
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         next
       );
@@ -218,7 +218,7 @@ describe("lite checkpoint", () => {
         //doesn't matter random value, lite not check the value at array 0
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         next
       );
@@ -228,7 +228,7 @@ describe("lite checkpoint", () => {
         7,
         block6Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -238,7 +238,7 @@ describe("lite checkpoint", () => {
         8,
         block7Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -248,7 +248,7 @@ describe("lite checkpoint", () => {
         9,
         block8Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -286,7 +286,7 @@ describe("lite checkpoint", () => {
         //doesn't matter random value, lite not check the value at array 0
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         next
       );
@@ -296,7 +296,7 @@ describe("lite checkpoint", () => {
         7,
         block6Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -306,7 +306,7 @@ describe("lite checkpoint", () => {
         8,
         block7Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -316,7 +316,7 @@ describe("lite checkpoint", () => {
         9,
         block8Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -370,7 +370,7 @@ describe("lite checkpoint", () => {
         //doesn't matter random value, lite not check the value at array 0
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         next.map((item) => item.address)
       );
@@ -380,7 +380,7 @@ describe("lite checkpoint", () => {
         6,
         block6Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -390,7 +390,7 @@ describe("lite checkpoint", () => {
         7,
         block7Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -400,7 +400,7 @@ describe("lite checkpoint", () => {
         8,
         block8Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -410,7 +410,7 @@ describe("lite checkpoint", () => {
         9,
         block9Hash,
         customValidators,
-        2,
+        3,
         next.map((item) => item.address),
         []
       );
@@ -463,7 +463,7 @@ describe("lite checkpoint", () => {
         //doesn't matter random value, lite not check the value at array 0
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         next.map((item) => item.address),
         penalties.map((item) => item.address)
@@ -474,7 +474,7 @@ describe("lite checkpoint", () => {
         6,
         block6Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -484,7 +484,7 @@ describe("lite checkpoint", () => {
         7,
         block7Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -494,7 +494,7 @@ describe("lite checkpoint", () => {
         8,
         block8Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -504,7 +504,7 @@ describe("lite checkpoint", () => {
         9,
         block9Hash,
         customValidators,
-        2,
+        3,
         actualValidators.map((item) => item.address),
         []
       );
