@@ -4,7 +4,7 @@ const subnet = require("./utils/subnet");
 
 async function main() {
   const { data0Encoded, data1Encoded } = await subnet.data();
-
+  const subnetDeploy = deploy["subnet"];
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(
     "LiteCheckpoint"
@@ -22,10 +22,10 @@ async function main() {
 
   await lite.deployed();
   const tx = await lite.init(
-    deploy["validators"],
+    subnetDeploy["validators"],
     data1Encoded,
-    deploy["gap"],
-    deploy["epoch"]
+    subnetDeploy["gap"],
+    subnetDeploy["epoch"]
   );
   await tx.wait();
   console.log("lite checkpoint deployed to:", lite.address);

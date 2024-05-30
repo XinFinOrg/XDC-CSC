@@ -1,13 +1,15 @@
 const hre = require("hardhat");
 const deploy = require("../deployment.config.json");
-const subnet = require("./utils/subnet");
+const parentnet = require("./utils/parentnet");
 async function main() {
-  const { data0Encoded, data1Encoded } = await subnet.data();
-  const subnetDeploy = deploy["subnet"];
+  const parentnetDeploy = deploy["parentnet"];
+  const { data0Encoded, data1Encoded } = await parentnet.data(
+    parentnetDeploy["v2esbn"]
+  );
 
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(
-    "FullCheckpoint"
+    "ReverseFullCheckpoint"
   );
 
   let full;
@@ -16,21 +18,19 @@ async function main() {
   } catch (e) {
     console.error(e, "\n");
     throw Error(
-      "deploy to parentnet node failure , pls check the parentnet node status"
+      "deploy to subnet node failure , pls check the parentnet node status"
     );
   }
 
   await full.deployed();
 
   const tx = await full.init(
-    subnetDeploy["validators"],
     data0Encoded,
-    data1Encoded,
-    subnetDeploy["gap"],
-    subnetDeploy["epoch"]
+    parentnetDeploy["epoch"],
+    parentnetDeploy["v2esbn"]
   );
   await tx.wait();
-  console.log("full checkpoint deployed to:", full.address);
+  console.log("reverse full checkpoint deployed to:", full.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

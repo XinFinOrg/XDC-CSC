@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity =0.8.23;
 
-import {HeaderReader} from "./libraries/HeaderReader.sol";
+import {ReverseHeaderReader as HeaderReader} from "./libraries/ReverseHeaderReader.sol";
 
-contract FullCheckpoint {
-    // Compressed subnet header information stored on chain
+contract ReverseFullCheckpoint {
+    // Compressed mainnet header information stored on chain
     struct Header {
         bytes32 stateRoot;
         bytes32 transactionsRoot;
@@ -40,69 +40,57 @@ contract FullCheckpoint {
     bytes32 private latestBlock;
     bytes32 private latestFinalizedBlock;
 
-    string public constant MODE = "full";
+    string public constant MODE = "reverse full";
 
     uint64 private epochNum;
     uint64 public INIT_STATUS;
-    uint64 public INIT_GAP;
     uint64 public INIT_EPOCH;
+    uint64 public INIT_V2ESBN;
 
     // Event types
     event SubnetBlockAccepted(bytes32 blockHash, int256 number);
     event SubnetBlockFinalized(bytes32 blockHash, int256 number);
 
     function init(
-        address[] memory initialValidatorSet,
-        bytes memory genesisHeader,
-        bytes memory block1Header,
-        uint64 initGap,
-        uint64 initEpoch
+        bytes memory v2esbnHeader,
+        uint64 initEpoch,
+        int256 v2esbn
     ) public {
         require(INIT_STATUS == 0, "Already init");
-        require(initialValidatorSet.length > 0, "Validator Empty");
 
-        bytes32 genesisHeaderHash = keccak256(genesisHeader);
-        bytes32 block1HeaderHash = keccak256(block1Header);
-        (
-            bytes32 ph,
-            int256 n,
-            bytes32 stateRoot,
-            bytes32 transactionsRoot,
-            bytes32 receiptRoot
-        ) = HeaderReader.getBlock0Params(genesisHeader);
+        bytes32 v2esbnHeaderHash = keccak256(v2esbnHeader);
 
-        HeaderReader.ValidationParams memory block1 = HeaderReader
-            .getValidationParams(block1Header);
-        require(n == 0 && block1.number == 1, "Invalid Init Block");
-        headerTree[genesisHeaderHash] = Header({
-            receiptRoot: receiptRoot,
-            stateRoot: stateRoot,
-            transactionsRoot: transactionsRoot,
-            parentHash: ph,
-            mix: (uint256(n) << 128) | uint256(block.number)
-        });
-        headerTree[block1HeaderHash] = Header({
-            receiptRoot: block1.receiptRoot,
-            stateRoot: block1.stateRoot,
-            transactionsRoot: block1.transactionsRoot,
-            parentHash: block1.parentHash,
-            mix: (uint256(block1.number) << 128) |
-                (uint256(block1.roundNumber) << 64) |
+        address[] memory next = HeaderReader.getEpoch(v2esbnHeader);
+
+        require(next.length > 0, "No Epoch Validator Empty");
+
+        HeaderReader.ValidationParams memory v2esbnBlock = HeaderReader
+            .getValidationParams(v2esbnHeader);
+
+        require(v2esbnBlock.number == v2esbn, "Invalid Init Block");
+
+        headerTree[v2esbnHeaderHash] = Header({
+            receiptRoot: v2esbnBlock.receiptRoot,
+            stateRoot: v2esbnBlock.stateRoot,
+            transactionsRoot: v2esbnBlock.transactionsRoot,
+            parentHash: v2esbnBlock.parentHash,
+            mix: (uint256(v2esbnBlock.number) << 128) |
+                (uint256(v2esbnBlock.roundNumber) << 64) |
                 uint256(block.number)
         });
-        validators[1] = Validators({
-            set: initialValidatorSet,
-            threshold: int256((initialValidatorSet.length * 667 ))
+        validators[v2esbn] = Validators({
+            set: next,
+            threshold: int256((next.length * 667 ))
         });
-        currentValidators = validators[1];
-        setLookup(initialValidatorSet);
-        latestBlock = block1HeaderHash;
-        latestFinalizedBlock = block1HeaderHash;
-        committedBlocks[0] = genesisHeaderHash;
-        committedBlocks[1] = block1HeaderHash;
-        INIT_GAP = initGap;
+        currentValidators = validators[v2esbn];
+        setLookup(next);
+        latestBlock = v2esbnHeaderHash;
+        latestFinalizedBlock = v2esbnHeaderHash;
+
+        committedBlocks[v2esbn] = v2esbnHeaderHash;
         INIT_EPOCH = initEpoch;
         INIT_STATUS = 1;
+        INIT_V2ESBN = uint64(int64(v2esbn));
     }
 
     /*
@@ -117,8 +105,7 @@ contract FullCheckpoint {
             HeaderReader.ValidationParams memory validationParams = HeaderReader
                 .getValidationParams(headers[x]);
 
-            (address[] memory current, address[] memory next) = HeaderReader
-                .getEpoch(headers[x]);
+            address[] memory next = HeaderReader.getEpoch(headers[x]);
 
             // Verify subnet header meta information
             require(validationParams.number > 0, "Repeated Genesis");
@@ -132,30 +119,18 @@ contract FullCheckpoint {
                 "Old Block"
             );
             Header memory header = headerTree[validationParams.parentHash];
+            require(header.mix != 0, "Parent Missing");
             require(
-                header.mix != 0,
-                "Parent Missing"
-            );
-            require(
-                int256(
-                    uint256(
-                        uint64(
-                            header.mix >> 128
-                        )
-                    )
-                ) +
-                    1 ==
+                int256(uint256(uint64(header.mix >> 128))) + 1 ==
                     validationParams.number,
                 "Invalid N"
             );
             require(
-                uint64(header.mix >> 64) <
-                    validationParams.roundNumber,
+                uint64(header.mix >> 64) < validationParams.roundNumber,
                 "Invalid RN"
             );
             require(
-                uint64(header.mix >> 64) ==
-                    validationParams.prevRoundNumber,
+                uint64(header.mix >> 64) == validationParams.prevRoundNumber,
                 "Invalid PRN"
             );
 
@@ -186,63 +161,20 @@ contract FullCheckpoint {
                 revert("Insufficient Signatures");
             }
 
-            if (current.length > 0 && next.length > 0)
-                revert("Malformed Block");
-            else if (current.length > 0) {
-                if (
-                    uint64(uint256(validationParams.number)) % INIT_EPOCH ==
-                    0 &&
-                    uint64(uint256(validationParams.number)) / INIT_EPOCH ==
-                    epochNum + 1
-                ) {
-                    int256 gapNumber = validationParams.number -
-                        (validationParams.number %
-                            int256(uint256(INIT_EPOCH))) -
-                        int256(uint256(INIT_GAP));
-                    // Edge case at the beginning
-                    if (gapNumber < 0) {
-                        gapNumber = 0;
-                    }
-                    unchecked {
-                        epochNum++;
-                        gapNumber++;
-                    }
+            if (
+                next.length > 0 &&
+                validationParams.prevRoundNumber <
+                validationParams.roundNumber -
+                    (validationParams.roundNumber % INIT_EPOCH)
+            ) {
+                setLookup(next);
 
-                    if (validators[gapNumber].threshold > 0) {
-                        if (
-                            !HeaderReader.areListsEqual(
-                                validators[gapNumber].set,
-                                current
-                            )
-                        ) {
-                            revert("Mismatched Validators");
-                        }
-                        setLookup(validators[gapNumber].set);
-                        currentValidators = validators[gapNumber];
-                    } else revert("Missing Current Validators");
-                } else {
-                    revert("Invalid Current Block");
-                }
-            } else if (next.length > 0) {
-                if (
-                    uint64(
-                        uint256(
-                            validationParams.number %
-                                int256(uint256(INIT_EPOCH))
-                        )
-                    ) ==
-                    INIT_EPOCH - INIT_GAP + 1 &&
-                    uint64(uint256(validationParams.number)) / INIT_EPOCH ==
-                    epochNum
-                ) {
-                    (bool isValidatorUnique, ) = checkUniqueness(next);
-                    if (!isValidatorUnique) revert("Repeated Validator");
+                validators[validationParams.number] = Validators({
+                    set: next,
+                    threshold: int256((next.length * 667 ))
+                });
 
-                    validators[validationParams.number] = Validators({
-                        set: next,
-                        threshold: int256((next.length * 667 ))
-                    });
-                } else revert("Invalid Next Block");
+                currentValidators = validators[validationParams.number];
             }
 
             // Store subnet header

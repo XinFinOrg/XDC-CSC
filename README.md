@@ -32,9 +32,13 @@ We recommend setting up the contract in a Python virtual environment since it ut
 
    Complete the fields in `deployment.config.json`:
 
-   - `validators`: List of initial validator addresses
-   - `gap`: GAP block number on the public chain
-   - `epoch`: EPOCH block number on the public chain
+   - `subnet`: subnet deploy config :
+      - `validators`: List of initial validator addresses
+      - `gap`: GAP block number on the public chain
+      - `epoch`: Blocks per epoch on the public chain
+   - `parentnet`: Subnet deploy config :
+      - `epoch`: Blocks per epoch on the public chain
+      - `v2esbn`: V2 epoch start block number, epoch block required
 
    Configure your network in `network.config.json`:
 
@@ -61,6 +65,12 @@ Deploy the contract and obtain the deployed contract address as follows:
    npx hardhat run scripts/LiteCheckpointDeploy.js --network xdcparentnet
    ```
 
+2. **Reverse Full Checkpoint Deployment**
+
+   ```shell
+   npx hardhat run scripts/ReverseFullCheckpointDeploy.js --network xdcsubnet
+   ```
+
 ## Additional Commands
 
 For further assistance or to execute other operations, utilize the commands below:
@@ -82,7 +92,7 @@ npx solhint 'contracts/**/*.sol' --fix
 ## Gas Report
 
 Refer to the gas report:
-![Gas Report](image-1.png)
+![Gas Report](gasrepoter.png)
 
 ## Upgrade Module
 

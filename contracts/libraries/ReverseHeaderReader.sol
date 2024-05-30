@@ -4,7 +4,7 @@ pragma solidity =0.8.23;
 // HeaderReader is a helper library to read fields out of rlp-encoded blocks.
 // It is mainly consisted of Solidity-RLP(https://github.com/hamdiallam/Solidity-RLP) and
 // solidity-rlp-encode(https://github.com/bakaoh/solidity-rlp-encode)
-library HeaderReader {
+library ReverseHeaderReader {
     // Solidity-RLP defined constants and struct
     uint8 private constant STRING_SHORT_START = 0x80;
     uint8 private constant STRING_LONG_START = 0xb8;
@@ -154,40 +154,47 @@ library HeaderReader {
             );
     }
 
+    function parseAddresses(
+        bytes memory data
+    ) public pure returns (address[] memory) {
+        uint256 numberOfAddresses = data.length / 20;
+        address[] memory addresses = new address[](numberOfAddresses);
+
+        uint256 dataIndex = 0;
+        for (uint256 i = 0; i < numberOfAddresses; i++) {
+            address addr;
+            assembly {
+                addr := mload(add(data, add(20, dataIndex)))
+            }
+            addresses[i] = addr;
+            dataIndex += 20;
+        }
+
+        return addresses;
+    }
+
     /*
      * @param rlp-encoded block header.
-     * @return (currentValidator list, nextValidator list).
+     * @return (nextValidator list).
      */
     function getEpoch(
         bytes memory header
-    ) internal pure returns (address[] memory current, address[] memory next) {
+    ) internal pure returns (address[] memory next) {
         RLPItem[] memory ls = toList(toRlpItem(header));
-        RLPItem[] memory list0 = toList(ls[16]);
-        if (list0.length > 0) {
-            current = new address[](list0.length);
-            for (uint256 i = 0; i < list0.length; i++) {
-                current[i] = toAddress(list0[i]);
-            }
-        }
-        RLPItem[] memory list1 = toList(ls[17]);
 
+        address[] memory list1 = parseAddresses(toBytes(ls[15]));
         if (list1.length > 0) {
-            RLPItem[] memory list2 = toList(ls[18]);
-            address[] memory uniqueAddr = new address[](list2.length);
-            address[] memory penalty = new address[](list2.length);
-            uint256 counter = 0;
-            for (uint256 i = 0; i < list2.length; i++) {
-                penalty[i] = toAddress(list2[i]);
-                uniqueAddr[i] = penalty[i];
-            }
+            address[] memory penalty = parseAddresses(toBytes(ls[17]));
+
             next = new address[](list1.length);
+            uint256 counter = 0;
             for (uint256 i = 0; i < list1.length; i++) {
-                address temp = toAddress(list1[i]);
-                if (!addressExist(uniqueAddr, temp)) {
-                    next[counter] = temp;
+                if (!addressExist(penalty, list1[i])) {
+                    next[counter] = list1[i];
                     counter++;
                 }
             }
+
             // Resize the array.
             assembly {
                 mstore(next, counter)

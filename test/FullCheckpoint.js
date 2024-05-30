@@ -10,11 +10,11 @@ const {
   hash,
   encoded,
   getSigs,
-  composeAndSignBlock,
+  composeAndSignBlockSubnet,
   createValidators,
 } = require("./libraries/Utils");
 
-describe("checkpoint", () => {
+describe("full checkpoint", () => {
   const genesis =
     "0xf902bea00000000000000000000000000000000000000000000000000000000000000000a01dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347940000000000000000000000000000000000000000a03a9114857792f2a10b4d04ded4e29cb2371535ed749a7686aa2e9885c6007e25a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421b901000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001808347b760808464d68a93b8c5000000000000000000000000000000000000000000000000000000000000000010982668af23d3e4b8d26805543618412ac724d46f3c1d8ba6cc6b6fb6387b0fe5d2d37a822b261480f489a673042c2e5f17e5b2a5e49d71bf0611a4b51df3658799cccb48c172d54e3bc89649f04eb4d23cf44b862ba86703f11f6e94a4a833f4fe22440000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000088000000000000000080c0c0c0";
   const block2Encoded =
@@ -53,7 +53,7 @@ describe("checkpoint", () => {
     const block0 = getGenesis(customValidators);
     const block0Hash = hash(block0);
     const block0Encoded = encoded(block0);
-    const [block1, block1Encoded, block1Hash] = composeAndSignBlock(
+    const [block1, block1Encoded, block1Hash] = composeAndSignBlockSubnet(
       1,
       1,
       0,
@@ -160,13 +160,13 @@ describe("checkpoint", () => {
 
   describe("test checkpoint custom block data", () => {
     it("should receive new header", async () => {
-      const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
+      const [block2, block2Encoded, block2Hash] = composeAndSignBlockSubnet(
         2,
         2,
         1,
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -180,43 +180,43 @@ describe("checkpoint", () => {
       expect(latestBlocks[0].hash).to.eq(block2Hash);
     });
     it("should confirm a received block", async () => {
-      const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
+      const [block2, block2Encoded, block2Hash] = composeAndSignBlockSubnet(
         2,
         2,
         1,
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block3, block3Encoded, block3Hash] = composeAndSignBlock(
+      const [block3, block3Encoded, block3Hash] = composeAndSignBlockSubnet(
         3,
         3,
         2,
         block2Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block4, block4Encoded, block4Hash] = composeAndSignBlock(
+      const [block4, block4Encoded, block4Hash] = composeAndSignBlockSubnet(
         4,
         4,
         3,
         block3Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block5, block5Encoded, block5Hash] = composeAndSignBlock(
+      const [block5, block5Encoded, block5Hash] = composeAndSignBlockSubnet(
         5,
         5,
         4,
         block4Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -231,96 +231,96 @@ describe("checkpoint", () => {
       expect(latestBlocks[1].hash).to.eq(block2Hash);
     });
     it("should switch a validator set", async () => {
-      const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
+      const [block2, block2Encoded, block2Hash] = composeAndSignBlockSubnet(
         2,
         2,
         1,
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block3, block3Encoded, block3Hash] = composeAndSignBlock(
+      const [block3, block3Encoded, block3Hash] = composeAndSignBlockSubnet(
         3,
         3,
         2,
         block2Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block4, block4Encoded, block4Hash] = composeAndSignBlock(
+      const [block4, block4Encoded, block4Hash] = composeAndSignBlockSubnet(
         4,
         4,
         3,
         block3Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block5, block5Encoded, block5Hash] = composeAndSignBlock(
+      const [block5, block5Encoded, block5Hash] = composeAndSignBlockSubnet(
         5,
         5,
         4,
         block4Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
 
       const next = createValidators(3);
 
-      const [block6, block6Encoded, block6Hash] = composeAndSignBlock(
+      const [block6, block6Encoded, block6Hash] = composeAndSignBlockSubnet(
         6,
         6,
         5,
         block5Hash,
         customValidators,
-        2,
+        3,
         [],
         next.map((item) => item.address)
       );
-      const [block7, block7Encoded, block7Hash] = composeAndSignBlock(
+      const [block7, block7Encoded, block7Hash] = composeAndSignBlockSubnet(
         7,
         7,
         6,
         block6Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block8, block8Encoded, block8Hash] = composeAndSignBlock(
+      const [block8, block8Encoded, block8Hash] = composeAndSignBlockSubnet(
         8,
         8,
         7,
         block7Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block9, block9Encoded, block9Hash] = composeAndSignBlock(
+      const [block9, block9Encoded, block9Hash] = composeAndSignBlockSubnet(
         9,
         9,
         8,
         block8Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block10, block10Encoded, block10Hash] = composeAndSignBlock(
+      const [block10, block10Encoded, block10Hash] = composeAndSignBlockSubnet(
         10,
         10,
         9,
         block9Hash,
         customValidators,
-        2,
+        3,
         next.map((item) => item.address),
         []
       );
@@ -358,43 +358,43 @@ describe("checkpoint", () => {
     });
 
     it("should penalty validitor verify", async () => {
-      const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
+      const [block2, block2Encoded, block2Hash] = composeAndSignBlockSubnet(
         2,
         2,
         1,
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block3, block3Encoded, block3Hash] = composeAndSignBlock(
+      const [block3, block3Encoded, block3Hash] = composeAndSignBlockSubnet(
         3,
         3,
         2,
         block2Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block4, block4Encoded, block4Hash] = composeAndSignBlock(
+      const [block4, block4Encoded, block4Hash] = composeAndSignBlockSubnet(
         4,
         4,
         3,
         block3Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block5, block5Encoded, block5Hash] = composeAndSignBlock(
+      const [block5, block5Encoded, block5Hash] = composeAndSignBlockSubnet(
         5,
         5,
         4,
         block4Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
@@ -402,54 +402,54 @@ describe("checkpoint", () => {
       const penalties = [next[0], next[1]];
       const actualValidators = [next[2], next[3], next[4]];
 
-      const [block6, block6Encoded, block6Hash] = composeAndSignBlock(
+      const [block6, block6Encoded, block6Hash] = composeAndSignBlockSubnet(
         6,
         6,
         5,
         block5Hash,
         customValidators,
-        2,
+        3,
         [],
         next.map((item) => item.address),
         penalties.map((item) => item.address)
       );
-      const [block7, block7Encoded, block7Hash] = composeAndSignBlock(
+      const [block7, block7Encoded, block7Hash] = composeAndSignBlockSubnet(
         7,
         7,
         6,
         block6Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block8, block8Encoded, block8Hash] = composeAndSignBlock(
+      const [block8, block8Encoded, block8Hash] = composeAndSignBlockSubnet(
         8,
         8,
         7,
         block7Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block9, block9Encoded, block9Hash] = composeAndSignBlock(
+      const [block9, block9Encoded, block9Hash] = composeAndSignBlockSubnet(
         9,
         9,
         8,
         block8Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block10, block10Encoded, block10Hash] = composeAndSignBlock(
+      const [block10, block10Encoded, block10Hash] = composeAndSignBlockSubnet(
         10,
         10,
         9,
         block9Hash,
         customValidators,
-        2,
+        3,
         actualValidators.map((item) => item.address),
         []
       );
@@ -468,43 +468,43 @@ describe("checkpoint", () => {
       );
     });
     it("should mainnet num submit", async () => {
-      const [block2, block2Encoded, block2Hash] = composeAndSignBlock(
+      const [block2, block2Encoded, block2Hash] = composeAndSignBlockSubnet(
         2,
         2,
         1,
         customeBlock1["hash"],
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block3, block3Encoded, block3Hash] = composeAndSignBlock(
+      const [block3, block3Encoded, block3Hash] = composeAndSignBlockSubnet(
         3,
         3,
         2,
         block2Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block4, block4Encoded, block4Hash] = composeAndSignBlock(
+      const [block4, block4Encoded, block4Hash] = composeAndSignBlockSubnet(
         4,
         4,
         3,
         block3Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
-      const [block5, block5Encoded, block5Hash] = composeAndSignBlock(
+      const [block5, block5Encoded, block5Hash] = composeAndSignBlockSubnet(
         5,
         5,
         4,
         block4Hash,
         customValidators,
-        2,
+        3,
         [],
         []
       );
