@@ -36,6 +36,7 @@ We recommend setting up the contract in a Python virtual environment since it ut
       - `validators`: List of initial validator addresses
       - `gap`: GAP block number on the public chain
       - `epoch`: Blocks per epoch on the public chain
+      - `gsbn`: gap start block number, gap block required
    - `parentnet`: Subnet deploy config :
       - `epoch`: Blocks per epoch on the public chain
       - `v2esbn`: V2 epoch start block number, epoch block required

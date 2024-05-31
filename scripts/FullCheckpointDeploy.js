@@ -2,8 +2,9 @@ const hre = require("hardhat");
 const deploy = require("../deployment.config.json");
 const subnet = require("./utils/subnet");
 async function main() {
-  const { data0Encoded, data1Encoded } = await subnet.data();
   const subnetDeploy = deploy["subnet"];
+
+  const { data0Encoded } = await subnet.data(subnetDeploy.gsbn);
 
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(
@@ -25,9 +26,9 @@ async function main() {
   const tx = await full.init(
     subnetDeploy["validators"],
     data0Encoded,
-    data1Encoded,
     subnetDeploy["gap"],
-    subnetDeploy["epoch"]
+    subnetDeploy["epoch"],
+    gsbn
   );
   await tx.wait();
   console.log("full checkpoint deployed to:", full.address);

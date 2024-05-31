@@ -61,7 +61,7 @@ contract LiteCheckpoint {
         bytes32 block1HeaderHash = keccak256(block1);
         validators[1] = Validators({
             set: initialValidatorSet,
-            threshold: int256((initialValidatorSet.length * 667 ))
+            threshold: int256((initialValidatorSet.length * 667))
         });
         currentValidators = validators[1];
         setLookup(initialValidatorSet);
@@ -237,7 +237,7 @@ contract LiteCheckpoint {
 
                 validators[validationParams.number] = Validators({
                     set: next,
-                    threshold: int256((next.length * 667 ))
+                    threshold: int256((next.length * 667))
                 });
                 latestEpoch = blockHash;
                 currentTree.push(blockHash);

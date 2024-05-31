@@ -29,10 +29,10 @@ contract ProxyGateway is ProxyAdmin {
     function createFullProxy(
         address full,
         address[] memory initialValidatorSet,
-        bytes memory genesisHeader,
-        bytes memory block1Header,
+        bytes memory gapHeader,
         uint64 initGap,
-        uint64 initEpoch
+        uint64 initEpoch,
+        int256 gsbn
     ) public onlyOwner returns (TransparentUpgradeableProxy) {
         require(
             address(cscProxies[0]) == address(0),
@@ -45,12 +45,12 @@ contract ProxyGateway is ProxyAdmin {
         );
 
         bytes memory data = abi.encodeWithSignature(
-            "init(address[],bytes,bytes,uint64,uint64)",
+            "init(address[],bytes,uint64,uint64,int256)",
             initialValidatorSet,
-            genesisHeader,
-            block1Header,
+            gapHeader,
             initGap,
-            initEpoch
+            initEpoch,
+            gsbn
         );
         cscProxies[0] = createProxy(full, data);
 
