@@ -47,6 +47,8 @@ contract FullCheckpoint {
     uint64 public INIT_GAP;
     uint64 public INIT_EPOCH;
 
+    uint64 public certThreshold = 667;
+
     // Event types
     event SubnetBlockAccepted(bytes32 blockHash, int256 number);
     event SubnetBlockFinalized(bytes32 blockHash, int256 number);
@@ -78,7 +80,7 @@ contract FullCheckpoint {
         });
         validators[gapBlock.number] = Validators({
             set: initialValidatorSet,
-            threshold: int256((initialValidatorSet.length * 667))
+            threshold: int256((initialValidatorSet.length * certThreshold))
         });
         currentValidators = validators[1];
         setLookup(initialValidatorSet);
@@ -213,7 +215,7 @@ contract FullCheckpoint {
 
                     validators[validationParams.number] = Validators({
                         set: next,
-                        threshold: int256((next.length * 667))
+                        threshold: int256((next.length * certThreshold))
                     });
                 } else revert("Invalid Next Block");
             }
