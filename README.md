@@ -120,7 +120,7 @@ To upgrade the module, follow these steps:
    ```shell
    npx hardhat run scripts/proxy/UpgradeCSC.js --network xdcparentnet
    ```
-   
-## Tips
+
+## Important reminder
 
 Because the node might modify the value of `certThreshold` based on the configuration file, when the node makes such modifications, the `certThreshold` in the CSC needs to be hardcoded and upgraded accordingly.
