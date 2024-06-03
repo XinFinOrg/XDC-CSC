@@ -69,6 +69,10 @@ contract FullCheckpoint {
             .getValidationParams(gapBlockHeader);
         require(gapBlock.number == gsbn, "Invalid Init Block");
 
+        (, address[] memory next) = HeaderReader.getEpoch(gapBlockHeader);
+
+        require(next.length > 0, "No Gap Validator Empty");
+
         headerTree[gapHeaderHash] = Header({
             receiptRoot: gapBlock.receiptRoot,
             stateRoot: gapBlock.stateRoot,
