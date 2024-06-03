@@ -9,7 +9,7 @@
     ],
     "gap": 450,
     "epoch": 900,
-    "gsbn":1
+    "gsbn": 451
   },
   "parentnet": {
     "epoch": 900,
