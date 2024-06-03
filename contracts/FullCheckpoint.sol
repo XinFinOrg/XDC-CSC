@@ -71,8 +71,22 @@ contract FullCheckpoint {
 
         (, address[] memory next) = HeaderReader.getEpoch(gapBlockHeader);
 
-        if (gsbn != 1) {
+        if (gsbn == 1) {
+            validators[1] = Validators({
+                set: initialValidatorSet,
+                threshold: int256((initialValidatorSet.length * certThreshold))
+            });
+            currentValidators = validators[1];
+        } else {
             require(next.length > 0, "No Gap Validator Empty");
+            validators[gapBlock.number] = Validators({
+                set: next,
+                threshold: int256((initialValidatorSet.length * certThreshold))
+            });
+            currentValidators = Validators({
+                set: initialValidatorSet,
+                threshold: int256((initialValidatorSet.length * certThreshold))
+            });
         }
 
         headerTree[gapHeaderHash] = Header({
@@ -84,11 +98,7 @@ contract FullCheckpoint {
                 (uint256(gapBlock.roundNumber) << 64) |
                 uint256(block.number)
         });
-        validators[gapBlock.number] = Validators({
-            set: initialValidatorSet,
-            threshold: int256((initialValidatorSet.length * certThreshold))
-        });
-        currentValidators = validators[1];
+
         setLookup(initialValidatorSet);
         latestBlock = gapHeaderHash;
         latestFinalizedBlock = gapHeaderHash;
