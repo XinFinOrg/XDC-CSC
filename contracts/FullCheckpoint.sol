@@ -71,7 +71,9 @@ contract FullCheckpoint {
 
         (, address[] memory next) = HeaderReader.getEpoch(gapBlockHeader);
 
-        require(next.length > 0, "No Gap Validator Empty");
+        if (gsbn != 1) {
+            require(next.length > 0, "No Gap Validator Empty");
+        }
 
         headerTree[gapHeaderHash] = Header({
             receiptRoot: gapBlock.receiptRoot,
