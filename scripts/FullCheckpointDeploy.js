@@ -28,7 +28,7 @@ async function main() {
     data0Encoded,
     subnetDeploy["gap"],
     subnetDeploy["epoch"],
-    gsbn
+    subnetDeploy.gsbn
   );
   await tx.wait();
   console.log("full checkpoint deployed to:", full.address);
