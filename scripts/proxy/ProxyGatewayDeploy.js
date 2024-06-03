@@ -8,10 +8,13 @@ async function main() {
 
   let proxyGateway;
   try {
-    console.error("deploying proxygateway to parentnet url:", hre.network.config.url)
+    console.error(
+      "deploying proxygateway to parentnet url:",
+      hre.network.config.url
+    );
     proxyGateway = await proxyGatewayFactory.deploy();
   } catch (e) {
-    console.error(e, "\n")
+    console.error(e, "\n");
     throw Error(
       "deploy to parentnet node failure , pls check the parentnet node status"
     );

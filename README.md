@@ -33,13 +33,13 @@ We recommend setting up the contract in a Python virtual environment since it ut
    Complete the fields in `deployment.config.json`:
 
    - `subnet`: subnet deploy config :
-      - `validators`: List of initial validator addresses
-      - `gap`: GAP block number on the public chain
-      - `epoch`: Blocks per epoch on the public chain
-      - `gsbn`: gap start block number, gap block required
+     - `validators`: List of initial validator addresses
+     - `gap`: GAP block number on the public chain
+     - `epoch`: Blocks per epoch on the public chain
+     - `gsbn`: gap start block number, gap block required
    - `parentnet`: Subnet deploy config :
-      - `epoch`: Blocks per epoch on the public chain
-      - `v2esbn`: V2 epoch start block number, epoch block required
+     - `epoch`: Blocks per epoch on the public chain
+     - `v2esbn`: V2 epoch start block number, epoch block required
 
    Configure your network in `network.config.json`:
 
@@ -66,7 +66,7 @@ Deploy the contract and obtain the deployed contract address as follows:
    npx hardhat run scripts/LiteCheckpointDeploy.js --network xdcparentnet
    ```
 
-2. **Reverse Full Checkpoint Deployment**
+3. **Reverse Full Checkpoint Deployment**
 
    ```shell
    npx hardhat run scripts/ReverseFullCheckpointDeploy.js --network xdcsubnet
