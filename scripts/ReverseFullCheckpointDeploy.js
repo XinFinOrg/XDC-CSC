@@ -20,7 +20,7 @@ async function main() {
   } catch (e) {
     console.error(e, "\n");
     throw Error(
-      "deploy to subnet node failure , pls check the parentnet node status"
+      "deploy to subnet node failure , pls check the subnet node status"
     );
   }
 
