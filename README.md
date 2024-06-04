@@ -41,6 +41,25 @@ We recommend setting up the contract in a Python virtual environment since it ut
      - `epoch`: Blocks per epoch on the public chain
      - `v2esbn`: V2 epoch start block number, epoch block required
 
+**How to Obtain gsbn in the Subnet**
+
+The gap block in the subnet follows a regular pattern. By adding 451 to each multiple of 900, you get the GSBN. For example, 451, 1351, etc.
+
+**How to Obtain v2esbn in the Parentnet**
+
+The epoch number in the parentnet is unpredictable, but you can obtain the latest epoch number using the following command:
+
+```sh
+curl --location '${parentnet}' \
+--header 'Content-Type: application/json' \
+--data '{
+    "jsonrpc": "2.0",
+    "method": "XDPoS_getMissedRoundsInEpochByBlockNum",
+    "params": [],
+    "id": 1
+}'
+```
+
    Configure your network in `network.config.json`:
 
    - `xdcparentnet`: xdcparentnet RPC URL
