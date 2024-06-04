@@ -1,9 +1,10 @@
 const hre = require("hardhat");
 const deploy = require("../deployment.config.json");
-const subnet = require("./utils/subnet");
+const subnet = require("./utils/xdcnet");
+const network = require("../network.config.json");
 
 async function main() {
-  const { data0Encoded } = await subnet.data(1);
+  const { data0Encoded } = await subnet.data(network.xdcsubnet, 1);
   const subnetDeploy = deploy["subnet"];
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(

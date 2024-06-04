@@ -1,9 +1,13 @@
 const hre = require("hardhat");
 const deploy = require("../deployment.config.json");
-const parentnet = require("./utils/parentnet");
+const parentnet = require("./utils/xdcnet");
+const network = require("../network.config.json");
 async function main() {
   const parentnetDeploy = deploy["parentnet"];
-  const { data0Encoded } = await parentnet.data(parentnetDeploy["v2esbn"]);
+  const { data0Encoded } = await parentnet.data(
+    network.xdcparentnet,
+    parentnetDeploy["v2esbn"]
+  );
 
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(

@@ -1,19 +1,32 @@
 const fetch = require("node-fetch").default;
-const network = require("../../network.config.json");
-async function data(gsbn) {
-  console.log(gsbn);
+
+
+function base64ToHex(base64String) {
+  // Step 1: Decode base64 string to binary data
+  var binaryString = atob(base64String);
+
+  // Step 2: Convert binary data to hex
+  var hexString = "";
+  for (var i = 0; i < binaryString.length; i++) {
+    var hex = binaryString.charCodeAt(i).toString(16);
+    hexString += hex.length === 2 ? hex : "0" + hex;
+  }
+
+  return hexString;
+}
+
+async function data(url, number) {
   const block0 = {
     jsonrpc: "2.0",
     method: "XDPoS_getV2BlockByNumber",
-    params: ["0x" + Number(gsbn).toString(16)],
+    params: ["0x" + Number(number).toString(16)],
     id: 1,
   };
 
   let data0;
-
   try {
-    console.error("connecting to subnet at url:", network["xdcsubnet"]);
-    const block0res = await fetch(network["xdcsubnet"], {
+    console.error("connecting to parentnet at url:", url,);
+    const block0res = await fetch(url, {
       method: "POST",
       body: JSON.stringify(block0),
       headers: { "Content-Type": "application/json" },
@@ -33,7 +46,7 @@ async function data(gsbn) {
     );
     return;
   }
-  const data0Encoded = "0x" + data0["result"]["HexRLP"];
+  const data0Encoded = "0x" + base64ToHex(data0["result"]["EncodedRLP"]);
 
   return { data0Encoded };
 }
