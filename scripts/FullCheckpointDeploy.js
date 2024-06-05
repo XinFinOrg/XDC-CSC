@@ -11,8 +11,6 @@ async function main() {
     subnetDeploy.gsbn
   );
 
-  console.log(data0Encoded);
-
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(
     "FullCheckpoint"

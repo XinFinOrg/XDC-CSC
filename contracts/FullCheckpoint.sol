@@ -71,6 +71,9 @@ contract FullCheckpoint {
 
         (, address[] memory next) = HeaderReader.getEpoch(gapBlockHeader);
 
+        // If gsbn is 1, directly set the validator to the current one.
+        // If gsbn is not 1, configure the current block validator and the next one accordingly.
+        // For example, at block 451, set the validator for blocks 0-900 and next to 900-1800.
         if (gsbn == 1) {
             validators[1] = Validators({
                 set: initialValidatorSet,
