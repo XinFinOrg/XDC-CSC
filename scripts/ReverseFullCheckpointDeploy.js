@@ -1,9 +1,11 @@
 const hre = require("hardhat");
 const deploy = require("../deployment.config.json");
-const parentnet = require("./utils/parentnet");
+const parentnet = require("./utils/xdcnet");
+const network = require("../network.config.json");
 async function main() {
   const parentnetDeploy = deploy["parentnet"];
-  const { data0Encoded, data1Encoded } = await parentnet.data(
+  const { data0Encoded } = await parentnet.data(
+    network.xdcparentnet,
     parentnetDeploy["v2esbn"]
   );
 
@@ -18,7 +20,7 @@ async function main() {
   } catch (e) {
     console.error(e, "\n");
     throw Error(
-      "deploy to subnet node failure , pls check the parentnet node status"
+      "deploy to subnet node failure , pls check the subnet node status"
     );
   }
 

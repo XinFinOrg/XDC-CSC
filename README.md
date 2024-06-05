@@ -33,12 +33,13 @@ We recommend setting up the contract in a Python virtual environment since it ut
    Complete the fields in `deployment.config.json`:
 
    - `subnet`: subnet deploy config :
-      - `validators`: List of initial validator addresses
-      - `gap`: GAP block number on the public chain
-      - `epoch`: Blocks per epoch on the public chain
+     - `validators`: List of initial validator addresses
+     - `gap`: GAP block number on the public chain
+     - `epoch`: Blocks per epoch on the public chain
+     - `gsbn`: gap start block number, gap block required
    - `parentnet`: Subnet deploy config :
-      - `epoch`: Blocks per epoch on the public chain
-      - `v2esbn`: V2 epoch start block number, epoch block required
+     - `epoch`: Blocks per epoch on the public chain
+     - `v2esbn`: V2 epoch start block number, epoch block required
 
    Configure your network in `network.config.json`:
 
@@ -48,6 +49,25 @@ We recommend setting up the contract in a Python virtual environment since it ut
 2. **Environment Variables**
 
    Create a `.env` file containing a valid account private key (refer to `.env.sample` for an example).
+
+**How to Obtain gsbn in the Subnet**
+
+The gap block in the subnet follows a regular pattern. By adding 451 to each multiple of 900, you get the GSBN. For example, 451, 1351, etc.
+
+**How to Obtain v2esbn in the Parentnet**
+
+The epoch number in the parentnet is unpredictable, but you can obtain the latest epoch number using the following command:
+
+```sh
+curl --location '${parentnet}' \
+--header 'Content-Type: application/json' \
+--data '{
+    "jsonrpc": "2.0",
+    "method": "XDPoS_getMissedRoundsInEpochByBlockNum",
+    "params": [],
+    "id": 1
+}'
+```
 
 ## Contract Deployment
 
@@ -65,7 +85,7 @@ Deploy the contract and obtain the deployed contract address as follows:
    npx hardhat run scripts/LiteCheckpointDeploy.js --network xdcparentnet
    ```
 
-2. **Reverse Full Checkpoint Deployment**
+3. **Reverse Full Checkpoint Deployment**
 
    ```shell
    npx hardhat run scripts/ReverseFullCheckpointDeploy.js --network xdcsubnet
@@ -119,3 +139,7 @@ To upgrade the module, follow these steps:
    ```shell
    npx hardhat run scripts/proxy/UpgradeCSC.js --network xdcparentnet
    ```
+
+## Important reminder
+
+Because the node might modify the value of `certThreshold` based on the configuration file, when the node makes such modifications, the `certThreshold` in the CSC needs to be hardcoded and upgraded accordingly.

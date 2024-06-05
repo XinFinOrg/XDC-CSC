@@ -1,9 +1,10 @@
 const hre = require("hardhat");
 const deploy = require("../deployment.config.json");
-const subnet = require("./utils/subnet");
+const subnet = require("./utils/xdcnet");
+const network = require("../network.config.json");
 
 async function main() {
-  const { data0Encoded, data1Encoded } = await subnet.data();
+  const { data0Encoded } = await subnet.data(network.xdcsubnet, 1);
   const subnetDeploy = deploy["subnet"];
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(
@@ -14,7 +15,7 @@ async function main() {
   try {
     lite = await checkpointFactory.deploy();
   } catch (e) {
-    console.error(e, "\n")
+    console.error(e, "\n");
     throw Error(
       "deploy to parentnet node failure , pls check the parentnet node status"
     );
@@ -23,7 +24,7 @@ async function main() {
   await lite.deployed();
   const tx = await lite.init(
     subnetDeploy["validators"],
-    data1Encoded,
+    data0Encoded,
     subnetDeploy["gap"],
     subnetDeploy["epoch"]
   );

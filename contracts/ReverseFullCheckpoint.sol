@@ -47,6 +47,8 @@ contract ReverseFullCheckpoint {
     uint64 public INIT_EPOCH;
     uint64 public INIT_V2ESBN;
 
+    uint64 public certThreshold = 667;
+
     // Event types
     event SubnetBlockAccepted(bytes32 blockHash, int256 number);
     event SubnetBlockFinalized(bytes32 blockHash, int256 number);
@@ -80,7 +82,7 @@ contract ReverseFullCheckpoint {
         });
         validators[v2esbn] = Validators({
             set: next,
-            threshold: int256((next.length * 667 ))
+            threshold: int256((next.length * certThreshold))
         });
         currentValidators = validators[v2esbn];
         setLookup(next);
@@ -171,7 +173,7 @@ contract ReverseFullCheckpoint {
 
                 validators[validationParams.number] = Validators({
                     set: next,
-                    threshold: int256((next.length * 667 ))
+                    threshold: int256((next.length * certThreshold))
                 });
 
                 currentValidators = validators[validationParams.number];

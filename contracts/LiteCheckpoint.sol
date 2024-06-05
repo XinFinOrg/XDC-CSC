@@ -47,6 +47,8 @@ contract LiteCheckpoint {
     uint64 public INIT_GAP;
     uint64 public INIT_EPOCH;
 
+    uint64 public certThreshold = 667;
+
     // Event types
     event SubnetEpochBlockAccepted(bytes32 blockHash, uint64 number);
 
@@ -61,7 +63,7 @@ contract LiteCheckpoint {
         bytes32 block1HeaderHash = keccak256(block1);
         validators[1] = Validators({
             set: initialValidatorSet,
-            threshold: int256((initialValidatorSet.length * 667 ))
+            threshold: int256((initialValidatorSet.length * certThreshold))
         });
         currentValidators = validators[1];
         setLookup(initialValidatorSet);
@@ -237,7 +239,7 @@ contract LiteCheckpoint {
 
                 validators[validationParams.number] = Validators({
                     set: next,
-                    threshold: int256((next.length * 667 ))
+                    threshold: int256((next.length * certThreshold))
                 });
                 latestEpoch = blockHash;
                 currentTree.push(blockHash);

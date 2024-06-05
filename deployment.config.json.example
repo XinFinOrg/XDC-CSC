@@ -8,7 +8,8 @@
       "0xc07e9FBeB9695c89748594AB0e410ba11f75DE11"
     ],
     "gap": 450,
-    "epoch": 900
+    "epoch": 900,
+    "gsbn": 451
   },
   "parentnet": {
     "epoch": 900,

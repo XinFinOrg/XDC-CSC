@@ -22,10 +22,13 @@ async function main() {
 
   let full;
   try {
-    console.error("deploying upgradeCSC to parentnet url:", hre.network.config.url)
+    console.error(
+      "deploying upgradeCSC to parentnet url:",
+      hre.network.config.url
+    );
     full = await fullFactory.deploy();
   } catch (e) {
-    console.error(e, "\n")
+    console.error(e, "\n");
     throw Error(
       "deploy to parentnet node failure , pls check the parentnet node status"
     );

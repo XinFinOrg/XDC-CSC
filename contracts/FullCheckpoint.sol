@@ -47,59 +47,65 @@ contract FullCheckpoint {
     uint64 public INIT_GAP;
     uint64 public INIT_EPOCH;
 
+    uint64 public certThreshold = 667;
+
     // Event types
     event SubnetBlockAccepted(bytes32 blockHash, int256 number);
     event SubnetBlockFinalized(bytes32 blockHash, int256 number);
 
     function init(
         address[] memory initialValidatorSet,
-        bytes memory genesisHeader,
-        bytes memory block1Header,
+        bytes memory gapBlockHeader,
         uint64 initGap,
-        uint64 initEpoch
+        uint64 initEpoch,
+        int256 gsbn
     ) public {
         require(INIT_STATUS == 0, "Already init");
         require(initialValidatorSet.length > 0, "Validator Empty");
 
-        bytes32 genesisHeaderHash = keccak256(genesisHeader);
-        bytes32 block1HeaderHash = keccak256(block1Header);
-        (
-            bytes32 ph,
-            int256 n,
-            bytes32 stateRoot,
-            bytes32 transactionsRoot,
-            bytes32 receiptRoot
-        ) = HeaderReader.getBlock0Params(genesisHeader);
+        bytes32 gapHeaderHash = keccak256(gapBlockHeader);
 
-        HeaderReader.ValidationParams memory block1 = HeaderReader
-            .getValidationParams(block1Header);
-        require(n == 0 && block1.number == 1, "Invalid Init Block");
-        headerTree[genesisHeaderHash] = Header({
-            receiptRoot: receiptRoot,
-            stateRoot: stateRoot,
-            transactionsRoot: transactionsRoot,
-            parentHash: ph,
-            mix: (uint256(n) << 128) | uint256(block.number)
-        });
-        headerTree[block1HeaderHash] = Header({
-            receiptRoot: block1.receiptRoot,
-            stateRoot: block1.stateRoot,
-            transactionsRoot: block1.transactionsRoot,
-            parentHash: block1.parentHash,
-            mix: (uint256(block1.number) << 128) |
-                (uint256(block1.roundNumber) << 64) |
+        HeaderReader.ValidationParams memory gapBlock = HeaderReader
+            .getValidationParams(gapBlockHeader);
+        require(gapBlock.number == gsbn, "Invalid Init Block");
+
+        (, address[] memory next) = HeaderReader.getEpoch(gapBlockHeader);
+
+        // If gsbn is 1, directly set the validator to the current one.
+        // If gsbn is not 1, configure the current block validator and the next one accordingly.
+        // For example, at block 451, set the validator for blocks 0-900 and next to 900-1800.
+        if (gsbn == 1) {
+            validators[1] = Validators({
+                set: initialValidatorSet,
+                threshold: int256((initialValidatorSet.length * certThreshold))
+            });
+            currentValidators = validators[1];
+        } else {
+            require(next.length > 0, "No Gap Validator Empty");
+            validators[gapBlock.number] = Validators({
+                set: next,
+                threshold: int256((initialValidatorSet.length * certThreshold))
+            });
+            currentValidators = Validators({
+                set: initialValidatorSet,
+                threshold: int256((initialValidatorSet.length * certThreshold))
+            });
+        }
+
+        headerTree[gapHeaderHash] = Header({
+            receiptRoot: gapBlock.receiptRoot,
+            stateRoot: gapBlock.stateRoot,
+            transactionsRoot: gapBlock.transactionsRoot,
+            parentHash: gapBlock.parentHash,
+            mix: (uint256(gapBlock.number) << 128) |
+                (uint256(gapBlock.roundNumber) << 64) |
                 uint256(block.number)
         });
-        validators[1] = Validators({
-            set: initialValidatorSet,
-            threshold: int256((initialValidatorSet.length * 667 ))
-        });
-        currentValidators = validators[1];
+
         setLookup(initialValidatorSet);
-        latestBlock = block1HeaderHash;
-        latestFinalizedBlock = block1HeaderHash;
-        committedBlocks[0] = genesisHeaderHash;
-        committedBlocks[1] = block1HeaderHash;
+        latestBlock = gapHeaderHash;
+        latestFinalizedBlock = gapHeaderHash;
+        committedBlocks[gapBlock.number] = gapHeaderHash;
         INIT_GAP = initGap;
         INIT_EPOCH = initEpoch;
         INIT_STATUS = 1;
@@ -132,30 +138,18 @@ contract FullCheckpoint {
                 "Old Block"
             );
             Header memory header = headerTree[validationParams.parentHash];
+            require(header.mix != 0, "Parent Missing");
             require(
-                header.mix != 0,
-                "Parent Missing"
-            );
-            require(
-                int256(
-                    uint256(
-                        uint64(
-                            header.mix >> 128
-                        )
-                    )
-                ) +
-                    1 ==
+                int256(uint256(uint64(header.mix >> 128))) + 1 ==
                     validationParams.number,
                 "Invalid N"
             );
             require(
-                uint64(header.mix >> 64) <
-                    validationParams.roundNumber,
+                uint64(header.mix >> 64) < validationParams.roundNumber,
                 "Invalid RN"
             );
             require(
-                uint64(header.mix >> 64) ==
-                    validationParams.prevRoundNumber,
+                uint64(header.mix >> 64) == validationParams.prevRoundNumber,
                 "Invalid PRN"
             );
 
@@ -240,7 +234,7 @@ contract FullCheckpoint {
 
                     validators[validationParams.number] = Validators({
                         set: next,
-                        threshold: int256((next.length * 667 ))
+                        threshold: int256((next.length * certThreshold))
                     });
                 } else revert("Invalid Next Block");
             }
