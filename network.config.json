@@ -1,6 +1,6 @@
 {
-  "xdcparentnet": "http://devnet.hashlabs.apothem.network:8545/",
-  "xdcsubnet": "http://194.163.167.177:8545/",
+  "xdcparentnet": "https://devnetstats.apothem.network/devnet",
+  "xdcsubnet": "https://devnetstats.apothem.network/subnet",
   "xdcdevnet": "https://devnetstats.apothem.network/devnet",
   "xdctestnet": "https://erpc.apothem.network/"
 }
