@@ -64,7 +64,7 @@ contract ReverseFullCheckpoint {
 
         address[] memory next = HeaderReader.getEpoch(v2esbnHeader);
 
-        require(next.length > 0, "No Epoch Validator Empty");
+        require(next.length > 0, "No Epoch Block");
 
         HeaderReader.ValidationParams memory v2esbnBlock = HeaderReader
             .getValidationParams(v2esbnHeader);
