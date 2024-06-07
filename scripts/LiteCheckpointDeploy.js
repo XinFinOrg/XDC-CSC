@@ -5,6 +5,7 @@ const network = require("../network.config.json");
 
 async function main() {
   const { data0Encoded } = await subnet.data(network.xdcsubnet, 1);
+  const validators = await subnet.validators(network.xdcsubnet, 1);
   const subnetDeploy = deploy["subnet"];
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(
@@ -23,7 +24,7 @@ async function main() {
 
   await lite.deployed();
   const tx = await lite.init(
-    subnetDeploy["validators"],
+    validators,
     data0Encoded,
     subnetDeploy["gap"],
     subnetDeploy["epoch"]
