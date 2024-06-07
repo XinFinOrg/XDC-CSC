@@ -42,7 +42,7 @@ contract FullCheckpoint {
 
     string public constant MODE = "full";
 
-    uint64 private epochNum;
+    uint64 public epochNum;
     uint64 public INIT_STATUS;
     uint64 public INIT_GAP;
     uint64 public INIT_EPOCH;
