@@ -81,7 +81,13 @@ contract FullCheckpoint {
             });
             currentValidators = validators[1];
         } else {
-            require(next.length > 0, "No Gap Validator Empty");
+            require(
+                next.length > 0 &&
+                    uint64(uint256(gsbn % int256(uint256(initEpoch)))) ==
+                    initEpoch - initGap + 1,
+                "No Gap Block"
+            );
+
             validators[gapBlock.number] = Validators({
                 set: next,
                 threshold: int256((initialValidatorSet.length * certThreshold))
@@ -90,6 +96,7 @@ contract FullCheckpoint {
                 set: initialValidatorSet,
                 threshold: int256((initialValidatorSet.length * certThreshold))
             });
+            epochNum = uint64(int64(gapBlock.number)) / initEpoch;
         }
 
         headerTree[gapHeaderHash] = Header({
