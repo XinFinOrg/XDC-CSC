@@ -14,6 +14,24 @@ function base64ToHex(base64String) {
   return hexString;
 }
 
+async function validators(url, number) {
+  const block0 = {
+    jsonrpc: "2.0",
+    method: "XDPoS_getMasternodesByNumber",
+    params: ["0x" + Number(number).toString(16)],
+    id: 1,
+  };
+
+  const data0 = await send(url, block0);
+
+  if (!data0["result"]["Masternodes"]) {
+    console.error("remote node block " + number + " no validators");
+    return;
+  }
+
+  return data0["result"]["Masternodes"];
+}
+
 async function data(url, number) {
   const block0 = {
     jsonrpc: "2.0",
@@ -22,20 +40,7 @@ async function data(url, number) {
     id: 1,
   };
 
-  let data0;
-  try {
-    console.error("connecting to network at url:", url);
-    const block0res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(block0),
-      headers: { "Content-Type": "application/json" },
-    });
-
-    data0 = await block0res.json();
-  } catch (e) {
-    console.error(e, "\n");
-    throw Error("Fetch remote node data error , pls check the node status");
-  }
+  const data0 = await send(url, block0);
 
   if (!data0["result"]["Committed"]) {
     console.error("remote node block " + number + " is not committed");
@@ -46,4 +51,22 @@ async function data(url, number) {
   return { data0Encoded };
 }
 
-module.exports = { data };
+async function send(url, body) {
+  let data;
+  try {
+    console.error("connecting to network at url:", url);
+    const block0res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    data = await block0res.json();
+  } catch (e) {
+    console.error(e, "\n");
+    throw Error("Fetch remote node data error , pls check the node status");
+  }
+  return data;
+}
+
+module.exports = { data, validators };

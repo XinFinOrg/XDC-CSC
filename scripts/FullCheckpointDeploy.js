@@ -11,6 +11,11 @@ async function main() {
     subnetDeploy.gsbn
   );
 
+  const validators = await subnet.validators(
+    network.xdcsubnet,
+    subnetDeploy.gsbn
+  );
+
   // We get the contract to deploy
   const checkpointFactory = await hre.ethers.getContractFactory(
     "FullCheckpoint"
@@ -29,7 +34,7 @@ async function main() {
   await full.deployed();
 
   const tx = await full.init(
-    subnetDeploy["validators"],
+    validators,
     data0Encoded,
     subnetDeploy["gap"],
     subnetDeploy["epoch"],
