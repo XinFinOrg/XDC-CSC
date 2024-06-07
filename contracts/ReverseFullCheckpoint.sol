@@ -40,7 +40,7 @@ contract ReverseFullCheckpoint {
     bytes32 private latestBlock;
     bytes32 private latestFinalizedBlock;
 
-    string public constant MODE = "reverse full";
+    string public constant MODE = "reverse_full";
 
     uint64 private epochNum;
     uint64 public INIT_STATUS;
