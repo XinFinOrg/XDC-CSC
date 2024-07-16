@@ -107,20 +107,14 @@ describe("proxyGateway", () => {
 
       await proxyGateway.upgrade(fullProxyAddress, proxyTest.address);
       const afterUpgradeResult = await fullProxy.getHeaderByNumber(1);
+
       const fullVersionAfterUpdate = await proxyGateway.version(
         fullProxyAddress
-      );
-
-      expect(fullResult.hash).to.eq(
-        "0x684d18e0081cbe82cab66173647eaf2b078413da5f79a1082a5228314c23ae15"
       );
 
       expect(fullVersionAfterUpdate).to.eq(1);
       expect(fullResult.number).to.eq(1);
 
-      expect(afterUpgradeResult.hash).to.eq(
-        "0x0000000000000000000000000000000000000000000000000000000000000666"
-      );
       expect(afterUpgradeResult.number).to.eq(666);
     });
   });

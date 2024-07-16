@@ -384,36 +384,8 @@ contract LiteCheckpoint {
      */
     function getHeaderByNumber(
         uint256 number
-    ) public view returns (HeaderInfo memory, bytes32) {
-        if (heightTree[uint64(number)] != 0) {
-            bytes32 blockHash = heightTree[uint64(number)];
-
-            bool finalized = false;
-            if (int64(uint64(headerTree[blockHash])) != -1) {
-                finalized = true;
-            }
-            return (
-                HeaderInfo({
-                    parentHash: 0,
-                    number: uint64(headerTree[blockHash] >> 128),
-                    roundNum: uint64(headerTree[blockHash] >> 64),
-                    mainnetNum: int64(uint64(headerTree[blockHash])),
-                    finalized: finalized
-                }),
-                blockHash
-            );
-        } else {
-            return (
-                HeaderInfo({
-                    parentHash: 0,
-                    number: 0,
-                    roundNum: 0,
-                    mainnetNum: -1,
-                    finalized: false
-                }),
-                0
-            );
-        }
+    ) public view returns (HeaderInfo memory) {
+        return getHeader(heightTree[uint64(number)]);
     }
 
     function getCurrentEpochBlockByIndex(

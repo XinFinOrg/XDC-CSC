@@ -348,11 +348,10 @@ describe("full checkpoint", () => {
 
       const blockHeader7Resp = await custom.getHeaderByNumber(7);
 
-      expect(blockHeader7Resp.hash).to.eq(block7Hash);
       expect(blockHeader7Resp.number).to.eq(7);
 
       const blockHeader8Resp = await custom.getHeaderByNumber(8);
-      expect(blockHeader8Resp.hash).to.eq(block8Hash);
+
       expect(blockHeader8Resp.number).to.eq(8);
 
       const currentValidators = await custom.getCurrentValidators();

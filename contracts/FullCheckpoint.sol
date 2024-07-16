@@ -10,7 +10,7 @@ contract FullCheckpoint {
         bytes32 transactionsRoot;
         bytes32 receiptRoot;
         bytes32 parentHash;
-        uint256 mix; // padding 64 | uint64 number | uint64 roundNum | uint64 mainnetNum
+        uint256 mix; // padding 64 | uint64 number | uint64 roundNum | empty
     }
 
     struct HeaderInfo {
@@ -31,8 +31,16 @@ contract FullCheckpoint {
         int256 number;
     }
 
+    struct Range {
+        uint256 lastFinalizedNumber;
+        uint256 latestFinalizedNumber;
+    }
+
+    Range[] public finalizedRanges;
+
     mapping(bytes32 => Header) private headerTree;
-    mapping(int256 => bytes32) private committedBlocks;
+    mapping(uint64 => bytes32) private heightTree;
+
     mapping(address => bool) private lookup;
     mapping(address => bool) private uniqueAddr;
     mapping(int256 => Validators) private validators;
@@ -106,13 +114,21 @@ contract FullCheckpoint {
             parentHash: gapBlock.parentHash,
             mix: (uint256(gapBlock.number) << 128) |
                 (uint256(gapBlock.roundNumber) << 64) |
-                uint256(block.number)
+                0
         });
+
+        heightTree[uint64(uint256(gapBlock.number))] = gapHeaderHash;
 
         setLookup(initialValidatorSet);
         latestBlock = gapHeaderHash;
         latestFinalizedBlock = gapHeaderHash;
-        committedBlocks[gapBlock.number] = gapHeaderHash;
+        finalizedRanges.push(
+            Range({
+                lastFinalizedNumber: 0,
+                latestFinalizedNumber: uint256(gapBlock.number)
+            })
+        );
+
         INIT_GAP = initGap;
         INIT_EPOCH = initEpoch;
         INIT_STATUS = 1;
@@ -254,8 +270,9 @@ contract FullCheckpoint {
                 parentHash: validationParams.parentHash,
                 mix: (uint256(validationParams.number) << 128) |
                     (uint256(validationParams.roundNumber) << 64) |
-                    uint256(uint64(int64(-1)))
+                    0
             });
+            heightTree[uint64(uint256(validationParams.number))] = blockHash;
             emit SubnetBlockAccepted(blockHash, validationParams.number);
             if (
                 validationParams.number >
@@ -269,10 +286,10 @@ contract FullCheckpoint {
                 blockHash
             );
             if (!isCommitted) continue;
-            latestFinalizedBlock = committedBlock;
 
             // Confirm all ancestor unconfirmed block
             setCommittedStatus(committedBlock);
+            latestFinalizedBlock = committedBlock;
         }
     }
 
@@ -285,30 +302,21 @@ contract FullCheckpoint {
         }
     }
 
-    /* @dev Confirm all ancestor uncommitted block 
-       if mainnetNum is -1, it means the block is uncommitted.
-       if mainnetNum is not -1, it means the block is committed.
-     * @param startBlock
+    /* @dev Confirm all ancestor uncommitted block
+     * @param committedBlock
      * @return void
      */
-    function setCommittedStatus(bytes32 startBlock) internal {
-        while (
-            int64(uint64(headerTree[startBlock].mix)) == -1 && startBlock != 0
-        ) {
-            headerTree[startBlock].mix = HeaderReader.clearLowest(
-                headerTree[startBlock].mix,
-                64
-            );
-            headerTree[startBlock].mix |= block.number;
-            committedBlocks[
-                int256(uint256(uint64(headerTree[startBlock].mix >> 128)))
-            ] = startBlock;
-            emit SubnetBlockFinalized(
-                startBlock,
-                int256(uint256(uint64(headerTree[startBlock].mix >> 128)))
-            );
-            startBlock = headerTree[startBlock].parentHash;
-        }
+    function setCommittedStatus(bytes32 committedBlock) internal {
+        finalizedRanges.push(
+            Range({
+                lastFinalizedNumber: uint256(
+                    uint64(headerTree[latestFinalizedBlock].mix >> 128)
+                ),
+                latestFinalizedNumber: uint256(
+                    uint64(headerTree[committedBlock].mix >> 128)
+                )
+            })
+        );
     }
 
     function checkUniqueness(
@@ -373,10 +381,11 @@ contract FullCheckpoint {
                 })
             );
         }
-        bool finalized = false;
-        if (int64(uint64(headerTree[blockHash].mix)) != -1) {
-            finalized = true;
-        }
+
+        (int256 finalizedNumber, bool isFinalized) = getFinalizedInfo(
+            blockHash
+        );
+
         return
             HeaderInfo({
                 parentHash: headerTree[blockHash].parentHash,
@@ -384,8 +393,8 @@ contract FullCheckpoint {
                     uint256(uint64(headerTree[blockHash].mix >> 128))
                 ),
                 roundNum: uint64(headerTree[blockHash].mix >> 64),
-                mainnetNum: int64(uint64(headerTree[blockHash].mix)),
-                finalized: finalized
+                mainnetNum: int64(finalizedNumber),
+                finalized: isFinalized
             });
     }
 
@@ -413,43 +422,39 @@ contract FullCheckpoint {
 
     /*
      * @param subnet block number.
-     * @return BlockLite struct defined above.
+     * @return HeaderInfo struct defined above.
      */
     function getHeaderByNumber(
-        int256 number
-    ) public view returns (BlockLite memory) {
-        if (committedBlocks[number] == 0) {
-            int256 blockNum = int256(
-                uint256(uint64(headerTree[latestBlock].mix >> 128))
-            );
-            if (number > blockNum) {
-                return BlockLite({hash: bytes32(0), number: 0});
+        uint256 number
+    ) public view returns (HeaderInfo memory) {
+        return getHeader(heightTree[uint64(number)]);
+    }
+
+    /**
+     * @dev Get the finalized information of a block.
+     * @param blockHash  The hash of the block.
+     * @return finalizedNumber  The number of the block.
+     * @return isFinalized  Whether the block is finalized.
+     */
+    function getFinalizedInfo(
+        bytes32 blockHash
+    ) public view returns (int256 finalizedNumber, bool isFinalized) {
+        uint256 blockNumber = uint256(uint64(headerTree[blockHash].mix >> 128));
+        if (blockNumber != 0) {
+            for (uint256 i = 0; i < finalizedRanges.length; i++) {
+                if (
+                    blockNumber >= finalizedRanges[i].lastFinalizedNumber &&
+                    blockNumber <= finalizedRanges[i].latestFinalizedNumber
+                ) {
+                    return (
+                        int256(finalizedRanges[i].latestFinalizedNumber),
+                        true
+                    );
+                }
             }
-            int256 numGap = blockNum - number;
-            bytes32 currHash = latestBlock;
-            for (int256 i = 0; i < numGap; i++) {
-                currHash = headerTree[currHash].parentHash;
-            }
-            return
-                BlockLite({
-                    hash: currHash,
-                    number: int256(
-                        uint256(uint64(headerTree[currHash].mix >> 128))
-                    )
-                });
-        } else {
-            return
-                BlockLite({
-                    hash: committedBlocks[number],
-                    number: int256(
-                        uint256(
-                            uint64(
-                                headerTree[committedBlocks[number]].mix >> 128
-                            )
-                        )
-                    )
-                });
         }
+
+        return (-1, false);
     }
 
     /*
