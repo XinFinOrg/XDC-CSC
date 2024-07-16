@@ -535,7 +535,7 @@ describe("full checkpoint", () => {
       let lastRoundNum = 2;
       let lastNumber = 2;
       await custom.receiveHeader([block2Encoded]);
-      for (i = 3; i < 100; i++) {
+      for (i = 3; i < 1000; i++) {
         const [block3, block3Encoded, block3Hash] = composeAndSignBlockSubnet(
           lastNumber + 1,
           lastRoundNum + 2 * i,
