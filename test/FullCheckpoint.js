@@ -520,7 +520,7 @@ describe("full checkpoint", () => {
       const block3Resp = await custom.getHeader(block3Hash);
       expect(block3Resp.mainnetNum).to.eq(-1);
     });
-    it("should finalized block", async () => {
+    it("should finalized a lot of blocks", async () => {
       const [block2, block2Encoded, block2Hash] = composeAndSignBlockSubnet(
         2,
         2,
@@ -535,7 +535,7 @@ describe("full checkpoint", () => {
       let lastRoundNum = 2;
       let lastNumber = 2;
       await custom.receiveHeader([block2Encoded]);
-      for (i = 3; i < 100; i++) {
+      for (i = 3; i < 1000; i++) {
         const [block3, block3Encoded, block3Hash] = composeAndSignBlockSubnet(
           lastNumber + 1,
           lastRoundNum + 2 * i,
@@ -549,7 +549,7 @@ describe("full checkpoint", () => {
         lastNumber++;
         lastBlockHash = block3Hash;
         lastRoundNum = lastRoundNum + 2 * i;
-        // console.log(lastNumber, lastRoundNum, lastBlockHash);
+        console.log(lastNumber, lastRoundNum, lastBlockHash);
         await custom.receiveHeader([block3Encoded]);
       }
 
@@ -611,13 +611,13 @@ describe("full checkpoint", () => {
         );
 
       // Estimate gas
-      // const estimatedGas = await custom.estimateGas.receiveHeader([
-      //   block1001Encoded,
-      //   block1002Encoded,
-      //   block1003Encoded,
-      //   block1004Encoded,
-      // ]);
-      // console.log("Estimated Gas: ", estimatedGas.toString());
+      const estimatedGas = await custom.estimateGas.receiveHeader([
+        block1001Encoded,
+        block1002Encoded,
+        block1003Encoded,
+        block1004Encoded,
+      ]);
+      console.log("Estimated Gas: ", estimatedGas.toString());
 
       await custom.receiveHeader([
         block1001Encoded,
