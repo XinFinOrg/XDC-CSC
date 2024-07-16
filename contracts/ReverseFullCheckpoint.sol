@@ -364,7 +364,7 @@ contract ReverseFullCheckpoint {
         if (blockNumber != 0) {
             for (uint256 i = 0; i < finalizedRanges.length; i++) {
                 if (
-                    blockNumber >= finalizedRanges[i].lastFinalizedNumber &&
+                    blockNumber > finalizedRanges[i].lastFinalizedNumber &&
                     blockNumber <= finalizedRanges[i].latestFinalizedNumber
                 ) {
                     return (
