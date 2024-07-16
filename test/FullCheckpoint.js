@@ -549,7 +549,7 @@ describe("full checkpoint", () => {
         lastNumber++;
         lastBlockHash = block3Hash;
         lastRoundNum = lastRoundNum + 2 * i;
-        console.log(lastNumber, lastRoundNum, lastBlockHash);
+        // console.log(lastNumber, lastRoundNum, lastBlockHash);
         await custom.receiveHeader([block3Encoded]);
       }
 
@@ -617,7 +617,7 @@ describe("full checkpoint", () => {
         block1003Encoded,
         block1004Encoded,
       ]);
-      console.log("Estimated Gas: ", estimatedGas.toString());
+      // console.log("Estimated Gas: ", estimatedGas.toString());
 
       await custom.receiveHeader([
         block1001Encoded,
