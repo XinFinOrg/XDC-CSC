@@ -217,10 +217,10 @@ contract ReverseFullCheckpoint {
                 blockHash
             );
             if (!isCommitted) continue;
-            latestFinalizedBlock = committedBlock;
 
             // Confirm all ancestor unconfirmed block
             setCommittedStatus(committedBlock);
+            latestFinalizedBlock = committedBlock;
         }
     }
 
