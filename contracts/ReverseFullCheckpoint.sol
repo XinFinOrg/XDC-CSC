@@ -32,8 +32,8 @@ contract ReverseFullCheckpoint {
     }
 
     struct Range {
-        uint256 lastFinalizedNumber;
-        uint256 latestFinalizedNumber;
+        uint64 lastFinalizedNumber;
+        uint64 latestFinalizedNumber;
     }
 
     Range[] public finalizedRanges;
@@ -100,7 +100,7 @@ contract ReverseFullCheckpoint {
         finalizedRanges.push(
             Range({
                 lastFinalizedNumber: 0,
-                latestFinalizedNumber: uint256(v2esbnBlock.number)
+                latestFinalizedNumber: uint64(uint256(v2esbnBlock.number))
             })
         );
 
@@ -240,10 +240,10 @@ contract ReverseFullCheckpoint {
     function setCommittedStatus(bytes32 committedBlock) internal {
         finalizedRanges.push(
             Range({
-                lastFinalizedNumber: uint256(
+                lastFinalizedNumber: (
                     uint64(headerTree[latestFinalizedBlock].mix >> 128)
                 ),
-                latestFinalizedNumber: uint256(
+                latestFinalizedNumber: (
                     uint64(headerTree[committedBlock].mix >> 128)
                 )
             })
@@ -359,7 +359,7 @@ contract ReverseFullCheckpoint {
      */
     function getFinalizedInfo(
         bytes32 blockHash
-    ) public view returns (int256 finalizedNumber, bool isFinalized) {
+    ) public view returns (int64 finalizedNumber, bool isFinalized) {
         uint256 blockNumber = uint256(uint64(headerTree[blockHash].mix >> 128));
         if (blockNumber != 0) {
             for (uint256 i = 0; i < finalizedRanges.length; i++) {
@@ -368,7 +368,7 @@ contract ReverseFullCheckpoint {
                     blockNumber <= finalizedRanges[i].latestFinalizedNumber
                 ) {
                     return (
-                        int256(finalizedRanges[i].latestFinalizedNumber),
+                        int64(finalizedRanges[i].latestFinalizedNumber),
                         true
                     );
                 }
