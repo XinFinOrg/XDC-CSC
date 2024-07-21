@@ -383,9 +383,9 @@ contract ReverseFullCheckpoint {
      * @return HeaderInfo struct defined above.
      */
     function getHeaderByNumber(
-        uint256 number
+        uint64 number
     ) public view returns (HeaderInfo memory) {
-        return getHeader(heightTree[uint64(number)]);
+        return getHeader(heightTree[number]);
     }
 
     /*
