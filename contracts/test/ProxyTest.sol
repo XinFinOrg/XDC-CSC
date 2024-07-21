@@ -11,7 +11,7 @@ contract ProxyTest {
     }
 
     function getHeaderByNumber(
-        uint256
+        uint64
     ) external pure returns (HeaderInfo memory) {
         return
             HeaderInfo({
