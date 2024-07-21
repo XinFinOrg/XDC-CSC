@@ -441,7 +441,7 @@ contract FullCheckpoint {
     ) public view returns (int64 finalizedNumber, bool isFinalized) {
         uint256 blockNumber = uint256(uint64(headerTree[blockHash].mix >> 128));
         if (blockNumber != 0) {
-            for (uint256 i = finalizedRanges.length - 1; i >= 0; i--) {
+            for (uint256 i = finalizedRanges.length - 1; i > 0; i--) {
                 if (
                     blockNumber > finalizedRanges[i].lastFinalizedNumber &&
                     blockNumber <= finalizedRanges[i].latestFinalizedNumber
