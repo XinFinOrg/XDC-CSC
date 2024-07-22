@@ -2,18 +2,24 @@
 pragma solidity =0.8.23;
 
 contract ProxyTest {
-    struct BlockLite {
-        bytes32 hash;
+    struct HeaderInfo {
+        bytes32 parentHash;
         int256 number;
+        uint64 roundNum;
+        int256 mainnetNum;
+        bool finalized;
     }
 
     function getHeaderByNumber(
-        int256
-    ) external pure returns (BlockLite memory) {
+        uint64
+    ) external pure returns (HeaderInfo memory) {
         return
-            BlockLite({
-                hash: 0x0000000000000000000000000000000000000000000000000000000000000666,
-                number: 666
+            HeaderInfo({
+                parentHash: 0x0000000000000000000000000000000000000000000000000000000000000666,
+                number: 666,
+                roundNum: 666,
+                mainnetNum: 666,
+                finalized: true
             });
     }
 }

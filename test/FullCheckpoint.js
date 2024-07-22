@@ -348,11 +348,10 @@ describe("full checkpoint", () => {
 
       const blockHeader7Resp = await custom.getHeaderByNumber(7);
 
-      expect(blockHeader7Resp.hash).to.eq(block7Hash);
       expect(blockHeader7Resp.number).to.eq(7);
 
       const blockHeader8Resp = await custom.getHeaderByNumber(8);
-      expect(blockHeader8Resp.hash).to.eq(block8Hash);
+
       expect(blockHeader8Resp.number).to.eq(8);
 
       const currentValidators = await custom.getCurrentValidators();
@@ -520,6 +519,116 @@ describe("full checkpoint", () => {
       expect(block2Resp.finalized).to.eq(true);
       const block3Resp = await custom.getHeader(block3Hash);
       expect(block3Resp.mainnetNum).to.eq(-1);
+    });
+    it("should finalized a lot of blocks", async () => {
+      const [block2, block2Encoded, block2Hash] = composeAndSignBlockSubnet(
+        2,
+        2,
+        1,
+        customeBlock1["hash"],
+        customValidators,
+        3,
+        [],
+        []
+      );
+      let lastBlockHash = block2Hash;
+      let lastRoundNum = 2;
+      let lastNumber = 2;
+      await custom.receiveHeader([block2Encoded]);
+      for (i = 3; i < 1000; i++) {
+        const [block3, block3Encoded, block3Hash] = composeAndSignBlockSubnet(
+          lastNumber + 1,
+          lastRoundNum + 2 * i,
+          lastRoundNum,
+          lastBlockHash,
+          customValidators,
+          3,
+          [],
+          []
+        );
+        lastNumber++;
+        lastBlockHash = block3Hash;
+        lastRoundNum = lastRoundNum + 2 * i;
+        // console.log(lastNumber, lastRoundNum, lastBlockHash);
+        await custom.receiveHeader([block3Encoded]);
+      }
+
+      const [block1001, block1001Encoded, block1001Hash] =
+        composeAndSignBlockSubnet(
+          lastNumber + 1,
+          lastRoundNum + 1,
+          lastRoundNum,
+          lastBlockHash,
+          customValidators,
+          3,
+          [],
+          []
+        );
+      lastNumber++;
+      lastBlockHash = block1001Hash;
+      lastRoundNum++;
+
+      const [block1002, block1002Encoded, block1002Hash] =
+        composeAndSignBlockSubnet(
+          lastNumber + 1,
+          lastRoundNum + 1,
+          lastRoundNum,
+          lastBlockHash,
+          customValidators,
+          3,
+          [],
+          []
+        );
+      lastNumber++;
+      lastBlockHash = block1002Hash;
+      lastRoundNum++;
+
+      const [block1003, block1003Encoded, block1003Hash] =
+        composeAndSignBlockSubnet(
+          lastNumber + 1,
+          lastRoundNum + 1,
+          lastRoundNum,
+          lastBlockHash,
+          customValidators,
+          3,
+          [],
+          []
+        );
+      lastNumber++;
+      lastBlockHash = block1003Hash;
+      lastRoundNum++;
+
+      const [block1004, block1004Encoded, block1004Hash] =
+        composeAndSignBlockSubnet(
+          lastNumber + 1,
+          lastRoundNum + 1,
+          lastRoundNum,
+          lastBlockHash,
+          customValidators,
+          3,
+          [],
+          []
+        );
+
+      // Estimate gas
+      const estimatedGas = await custom.estimateGas.receiveHeader([
+        block1001Encoded,
+        block1002Encoded,
+        block1003Encoded,
+        block1004Encoded,
+      ]);
+      // console.log("Estimated Gas: ", estimatedGas.toString());
+
+      await custom.receiveHeader([
+        block1001Encoded,
+        block1002Encoded,
+        block1003Encoded,
+        block1004Encoded,
+      ]);
+
+      const block1001Resp = await custom.getHeader(block1001Hash);
+
+      expect(block1001Resp.finalized).to.eq(true);
     });
   });
 });
