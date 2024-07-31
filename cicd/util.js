@@ -75,7 +75,7 @@ async function getGapSubnet(config) {
       gapBlockNum = epochBlockNum-450+1
     } else {
       console.log("response.status", response.status);
-      console.log("response.data", response.data);
+      // console.log("response.data", response.data);
       throw Error("could not get gapblock in subnet");
     }
   });
@@ -96,7 +96,7 @@ async function getEpochParentnet(config) {
       console.log("epochBlockNum", epochBlockNum)
     } else {
       console.log("response.status", response.status);
-      console.log("response.data", response.data);
+      // console.log("response.data", response.data);
       throw Error("could not get epoch block in parentnet");
     }
   });
