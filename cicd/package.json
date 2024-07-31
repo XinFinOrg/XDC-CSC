@@ -1,0 +1,8 @@
+{
+  "name": "csc-cicd",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "ethers": "^5.7.2",
+    "axios": "^1.7.2"
+  }
+}
