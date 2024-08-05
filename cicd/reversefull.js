@@ -18,16 +18,16 @@ async function main() {
 }
 
 function initDeployReverse() {
-  const reqENV = ["PARENTNET_URL", "SUBNET_URL", "SUBNET_WALLET_PK"];
+  const reqENV = ["PARENTNET_URL", "SUBNET_URL", "SUBNET_PK"];
   const isEnabled = reqENV.every((envVar) => envVar in process.env);
   if (!isEnabled) {
     throw Error(
-      "incomplete ENVs, require PARENTNET_URL, SUBNET_URL, SUBNET_WALLET_PK"
+      "incomplete ENVs, require PARENTNET_URL, SUBNET_URL, SUBNET_PK"
     );
   }
-  subnetPK = process.env.SUBNET_WALLET_PK.startsWith("0x")
-    ? process.env.SUBNET_WALLET_PK
-    : `0x${process.env.SUBNET_WALLET_PK}`;
+  subnetPK = process.env.SUBNET_PK.startsWith("0x")
+    ? process.env.SUBNET_PK
+    : `0x${process.env.SUBNET_PK}`;
   config["parentnetURL"] = process.env.PARENTNET_URL;
   config["subnetURL"] = process.env.SUBNET_URL;
   config["subnetPK"] = subnetPK;

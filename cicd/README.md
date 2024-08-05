@@ -8,8 +8,8 @@ Based on the provided `.env.example`, create your own `.env` file with the follo
 
 - **`PARENTNET_URL`**: RPC URL for the parentnet endpoint.
 - **`SUBNET_URL`**: RPC URL for the subnet.
-- **`PARENTNET_WALLET_PK`**: Private key used for CSC deployment, there should be some funds.
-- **`SUBNET_WALLET_PK`**: Private key for subnet deployment. (only required for reverse CSC)
+- **`PARENTNET_PK`**: Private key used for CSC deployment, there should be some funds.
+- **`SUBNET_PK`**: Private key for subnet deployment. (only required for reverse CSC)
 
 #### Step 2: Deploy CSC
 You have a choice to deploy one of three types of CSC
@@ -40,8 +40,8 @@ Based on the provided `.env.example`, create your own `.env` file with the follo
 
 - **`PARENTNET_URL`**: RPC URL for the parentnet endpoint.
 - **`SUBNET_URL`**: RPC URL for the subnet.
-- **`PARENTNET_WALLET_PK`**: Private key used for CSC deployment, there should be some funds.
-- **`SUBNET_WALLET_PK`**: Private key for subnet deployment. (only required for reverse CSC)
+- **`PARENTNET_PK`**: Private key used for CSC deployment, there should be some funds.
+- **`SUBNET_PK`**: Private key for subnet deployment. (only required for reverse CSC)
 
 #### Step 2: Create a `deployment.config.json` File to cicd/mount
 

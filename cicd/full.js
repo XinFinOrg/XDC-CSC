@@ -18,16 +18,16 @@ async function main() {
 }
 
 function initDeployFull() {
-  const reqENV = ["PARENTNET_URL", "SUBNET_URL", "PARENTNET_WALLET_PK"];
+  const reqENV = ["PARENTNET_URL", "SUBNET_URL", "PARENTNET_PK"];
   const isEnabled = reqENV.every((envVar) => envVar in process.env);
   if (!isEnabled) {
     throw Error(
-      "incomplete ENVs, require PARENTNET_URL, SUBNET_URL, PARENTNET_WALLET_PK"
+      "incomplete ENVs, require PARENTNET_URL, SUBNET_URL, PARENTNET_PK"
     );
   }
-  parentnetPK = process.env.PARENTNET_WALLET_PK.startsWith("0x")
-    ? process.env.PARENTNET_WALLET_PK
-    : `0x${process.env.PARENTNET_WALLET_PK}`;
+  parentnetPK = process.env.PARENTNET_PK.startsWith("0x")
+    ? process.env.PARENTNET_PK
+    : `0x${process.env.PARENTNET_PK}`;
   config["parentnetPK"] = parentnetPK;
   config["parentnetURL"] = process.env.PARENTNET_URL;
   config["subnetURL"] = process.env.SUBNET_URL;
