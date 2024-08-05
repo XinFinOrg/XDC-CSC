@@ -69,17 +69,21 @@ async function getGapSubnet(config) {
     params: ["latest"],
     id: 1,
   };
-  await axios.post(config.subnetURL, data).then((response) => {
+  await axios.post(config.subnetURL, data, {timeout: 2000}).then((response) => {
+    console.log(response)
     if (response.status == 200) {
       epochBlockNum = response.data.result.EpochBlockNumber;
       gapBlockNum = epochBlockNum-450+1
-    } else {
+      return gapBlockNum
+    }
+    if (response.status == -32601){
+      return 0
+    } 
       console.log("response.status", response.status);
       // console.log("response.data", response.data);
       throw Error("could not get gapblock in subnet");
-    }
+    
   });
-  return gapBlockNum
 }
 
 async function getEpochParentnet(config) {
