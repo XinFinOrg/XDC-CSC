@@ -81,7 +81,11 @@ async function getGapSubnet(config) {
       }
       epochBlockNum = response.data.result.EpochBlockNumber;
       gapBlockNum = epochBlockNum-450+1
+      if (gapBlockNum < 0){
+        gapBlockNum = 0
+      }
       return gapBlockNum
+      
     } else {
       console.log("response.status", response.status);
       // console.log("response.data", response.data);
