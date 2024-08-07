@@ -1,6 +1,6 @@
 {
-  "xdcparentnet": "https://devnetstats.apothem.network/devnet",
-  "xdcsubnet": "https://devnetstats.apothem.network/subnet",
-  "xdcdevnet": "https://devnetstats.apothem.network/devnet",
-  "xdctestnet": "https://erpc.apothem.network/"
+  "xdcsubnet": "http://localhost:8545",
+  "xdcparentnet": "https://erpc.apothem.network/",
+  "xdcdevnet": "",
+  "xdctestnet": ""
 }

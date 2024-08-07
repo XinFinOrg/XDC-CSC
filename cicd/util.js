@@ -69,17 +69,30 @@ async function getGapSubnet(config) {
     params: ["latest"],
     id: 1,
   };
-  await axios.post(config.subnetURL, data).then((response) => {
+  return await axios.post(config.subnetURL, data, {timeout: 10000}).then((response) => {
+    // console.log(response)
     if (response.status == 200) {
+      if (response.data.error){
+        if (response.data.error.code == -32601){
+          return 1
+        }
+        console.log("response.data.error", response.data.error)
+        throw Error("error in subnet gapblock response")
+      }
       epochBlockNum = response.data.result.EpochBlockNumber;
       gapBlockNum = epochBlockNum-450+1
+      if (gapBlockNum < 1){
+        gapBlockNum = 1
+      }
+      return gapBlockNum
+      
     } else {
       console.log("response.status", response.status);
       // console.log("response.data", response.data);
       throw Error("could not get gapblock in subnet");
     }
   });
-  return gapBlockNum
+
 }
 
 async function getEpochParentnet(config) {
@@ -90,7 +103,7 @@ async function getEpochParentnet(config) {
     params: ["latest"],
     id: 1,
   };
-  await axios.post(config.parentnetURL, data).then((response) => {
+  await axios.post(config.parentnetURL, data, {timeout: 10000}).then((response) => {
     if (response.status == 200) {
       epochBlockNum = response.data.result.EpochBlockNumber;
       console.log("epochBlockNum", epochBlockNum)
