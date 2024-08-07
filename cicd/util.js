@@ -74,15 +74,15 @@ async function getGapSubnet(config) {
     if (response.status == 200) {
       if (response.data.error){
         if (response.data.error.code == -32601){
-          return 0
+          return 1
         }
         console.log("response.data.error", response.data.error)
         throw Error("error in subnet gapblock response")
       }
       epochBlockNum = response.data.result.EpochBlockNumber;
       gapBlockNum = epochBlockNum-450+1
-      if (gapBlockNum < 0){
-        gapBlockNum = 0
+      if (gapBlockNum < 1){
+        gapBlockNum = 1
       }
       return gapBlockNum
       
