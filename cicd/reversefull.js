@@ -10,11 +10,17 @@ const u = require("./util.js");
 main();
 
 async function main() {
+  u.loadContractENV();
   console.log("start deploying reverse CSC");
   initDeployReverse();
   await configureFiles();
   deployReverse();
-  exportReverse();
+  const contractENV = exportReverse();
+  for (const [key, value] of Object.entries(contractENV)) {
+    u.replaceOrAddENV('./mount/contract_deploy.env', key, value)
+    u.replaceOrAddENV('./mount/common.env', key, value)
+  }
+  await setupSubnetWallets();
 }
 
 function initDeployReverse() {
@@ -78,16 +84,19 @@ function exportReverse() {
     "SUCCESS deploy reverse csc, please include the following line in your common.env"
   );
   console.log(`REVERSE_CHECKPOINT_CONTRACT=${config.reverseCSC}\n`);
-  fs.appendFileSync(
-    "mount/csc.env",
-    `\nREVERSE_CSC=${config.reverseCSC}\n`,
-    "utf-8",
-    (err) => {
-      if (err) {
-        throw Error("error writing mount/csc.env, " + err);
-      }
-    }
-  );
+  // fs.appendFileSync(
+  //   "mount/csc.env",
+  //   `\nREVERSE_CSC=${config.reverseCSC}\n`,
+  //   "utf-8",
+  //   (err) => {
+  //     if (err) {
+  //       throw Error("error writing mount/csc.env, " + err);
+  //     }
+  //   }
+  // );
+  return {
+    REVERSE_CHECKPOINT_CONTRACT: `REVERSE_CHECKPOINT_CONTRACT=${config.reverseCSC}`
+  }
 }
 
 function parseReverseOut(outString) {
@@ -131,4 +140,22 @@ function writeReverseDeployJson(v2esbn) {
   //   "epoch": 900,
   //   "gsbn": 1500751
   // },
+}
+
+async function setupSubnetWallets(){
+  u.loadCommonENV()
+  if (!fs.existsSync('./mount/keys.json')) {
+    throw Error(`could not modify ${filepath}, file not mounted`)
+  } 
+  const grandmasterPK = JSON.parse(fs.readFileSync('./mount/keys.json', 'utf8')).Grandmaster.PrivateKey
+
+  try{
+    new ethers.Wallet(process.env.SUBNET_WALLET_PK)
+    new ethers.Wallet(grandmasterPK)
+  }catch(error){
+    console.log(error)
+    console.log('failed to setup wallets, invalid PK')
+    process.exit()
+  }
+  await u.transferTokens(process.env.SUBNET_URL, grandmasterPK, process.env.SUBNET_WALLET_PK, 1000000)  
 }

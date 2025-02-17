@@ -1,7 +1,5 @@
 process.chdir(__dirname);
-const { execSync } = require("child_process");
 const fs = require("node:fs");
-const env = require("dotenv").config({ path: "mount/.env" });
 const config = {
   relativePath: "../",
 };
@@ -11,10 +9,15 @@ main();
 
 async function main() {
   console.log("start deploying lite CSC");
+  u.loadContractENV();
   initDeployLite();
   await configureFiles();
   deployLite();
-  exportLite();
+  const contractENV = exportLite();
+  for (const [key, value] of Object.entries(contractENV)) {
+    u.replaceOrAddENV('./mount/contract_deploy.env', key, value)
+    u.replaceOrAddENV('./mount/common.env', key, value)
+  }
 }
 
 function initDeployLite() {
@@ -78,16 +81,19 @@ function exportLite() {
     "SUCCESS deploy lite csc, please include the following line in your common.env"
   );
   console.log(`CHECKPOINT_CONTRACT=${config.liteCSC}\n`);
-  fs.appendFileSync(
-    "mount/csc.env",
-    `\nLITE_CSC=${config.liteCSC}\n`,
-    "utf-8",
-    (err) => {
-      if (err) {
-        throw Error("error writing mount/csc.env, " + err);
-      }
-    }
-  );
+  // fs.appendFileSync(
+  //   "mount/csc.env",
+  //   `\nLITE_CSC=${config.liteCSC}\n`,
+  //   "utf-8",
+  //   (err) => {
+  //     if (err) {
+  //       throw Error("error writing mount/csc.env, " + err);
+  //     }
+  //   }
+  // );
+  return {
+    CHECKPOINT_CONTRACT: `CHECKPOINT_CONTRACT=${config.liteCSC}`
+  }
 }
 
 

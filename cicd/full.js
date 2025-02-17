@@ -10,11 +10,17 @@ const u = require("./util.js");
 main();
 
 async function main() {
+  u.loadContractENV();
   console.log("start deploying full CSC");
   initDeployFull();
   await configureFiles();
   deployFull();
-  exportFull();
+  const contractENV = exportFull();
+  for (const [key, value] of Object.entries(contractENV)) {
+    u.replaceOrAddENV('./mount/contract_deploy.env', key, value)
+    u.replaceOrAddENV('./mount/common.env', key, value)
+  }
+  
 }
 
 function initDeployFull() {
@@ -78,16 +84,19 @@ function exportFull() {
     "SUCCESS deploy full csc, please include the following line in your common.env"
   );
   console.log(`CHECKPOINT_CONTRACT=${config.fullCSC}\n`);
-  fs.appendFileSync(
-    "mount/csc.env",
-    `\nFULL_CSC=${config.fullCSC}\n`,
-    "utf-8",
-    (err) => {
-      if (err) {
-        throw Error("error writing mount/csc.env, " + err);
-      }
-    }
-  );
+  // fs.appendFileSync(
+  //   "mount/csc.env",
+  //   `\nFULL_CSC=${config.fullCSC}\n`,
+  //   "utf-8",
+  //   (err) => {
+  //     if (err) {
+  //       throw Error("error writing mount/csc.env, " + err);
+  //     }
+  //   }
+  // );
+  return {
+    CHECKPOINT_CONTRACT: `CHECKPOINT_CONTRACT=${config.fullCSC}`
+  }
 }
 
 function parseFullOut(outString) {
