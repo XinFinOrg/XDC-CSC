@@ -1,5 +1,6 @@
 process.chdir(__dirname);
 const fs = require("node:fs");
+const { ethers } = require("ethers");
 const config = {
   relativePath: "../",
 };
