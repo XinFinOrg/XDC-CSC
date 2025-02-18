@@ -1,7 +1,5 @@
 process.chdir(__dirname);
-const { execSync } = require("child_process");
 const fs = require("node:fs");
-const env = require("dotenv").config({ path: "mount/.env" });
 const config = {
   relativePath: "../",
 };
@@ -95,7 +93,7 @@ function exportFull() {
   //   }
   // );
   return {
-    CHECKPOINT_CONTRACT: `CHECKPOINT_CONTRACT=${config.fullCSC}`
+    CHECKPOINT_CONTRACT: config.fullCSC
   }
 }
 

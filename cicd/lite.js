@@ -92,7 +92,7 @@ function exportLite() {
   //   }
   // );
   return {
-    CHECKPOINT_CONTRACT: `CHECKPOINT_CONTRACT=${config.liteCSC}`
+    CHECKPOINT_CONTRACT: config.liteCSC
   }
 }
 
