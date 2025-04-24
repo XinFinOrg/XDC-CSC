@@ -14,6 +14,10 @@ async function main() {
 
   let lite;
   try {
+    console.log(
+      "deploying LiteCheckpoint to parentnet url:",
+      hre.network.config.url
+    );
     lite = await checkpointFactory.deploy();
   } catch (e) {
     console.error(e, "\n");

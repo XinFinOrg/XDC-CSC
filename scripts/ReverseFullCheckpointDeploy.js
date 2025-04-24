@@ -16,6 +16,10 @@ async function main() {
 
   let full;
   try {
+    console.log(
+      "deploying ReverseFullCheckpoint to url:",
+      hre.network.config.url
+    );
     full = await checkpointFactory.deploy();
   } catch (e) {
     console.error(e, "\n");

@@ -64,7 +64,7 @@ async function send(url, body) {
     data = await block0res.json();
   } catch (e) {
     console.error(e, "\n");
-    throw Error("Fetch remote node data error , pls check the node status");
+    throw Error(`Fetch remote node data error , pls check the node status, url:${url}`);
   }
   return data;
 }

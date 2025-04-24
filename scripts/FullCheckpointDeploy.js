@@ -23,6 +23,10 @@ async function main() {
 
   let full;
   try {
+    console.log(
+      "deploying FullCheckpoint to parentnet url:",
+      hre.network.config.url
+    );
     full = await checkpointFactory.deploy();
   } catch (e) {
     console.error(e, "\n");
