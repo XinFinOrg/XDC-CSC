@@ -13,12 +13,17 @@ async function main() {
   );
 
   let lite;
+  const [deployer] = await hre.ethers.getSigners();
   try {
+    console.log(
+      "deploying LiteCheckpoint to parentnet url:",
+      hre.network.config.url
+    );
     lite = await checkpointFactory.deploy();
   } catch (e) {
     console.error(e, "\n");
     throw Error(
-      "deploy to parentnet node failure , pls check the parentnet node status"
+  `deploy to parentnet node failure , pls check the parentnet node status url: ${hre.network.config.url} deployer: ${deployer.address}`
     );
   }
 

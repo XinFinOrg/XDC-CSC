@@ -7,6 +7,7 @@ async function main() {
   );
 
   let proxyGateway;
+  const [deployer] = await hre.ethers.getSigners();
   try {
     console.error(
       "deploying proxygateway to parentnet url:",
@@ -16,7 +17,7 @@ async function main() {
   } catch (e) {
     console.error(e, "\n");
     throw Error(
-      "deploy to parentnet node failure , pls check the parentnet node status"
+  `deploy to parentnet node failure , pls check the parentnet node status url: ${hre.network.config.url} deployer: ${deployer.address}`
     );
   }
 
