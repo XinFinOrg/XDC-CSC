@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { getField, getNumberField } = require("../scripts/utils/xdpos");
+const { getField, getNumberField } = require("../scripts/utils/rpcResultFields");
 
 describe("XDPoS RPC result fields", () => {
   const xdposchain = {

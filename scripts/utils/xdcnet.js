@@ -1,5 +1,5 @@
 const fetch = require("node-fetch").default;
-const { getField } = require("./xdpos");
+const { getField } = require("./rpcResultFields");
 
 function base64ToHex(base64String) {
   // Step 1: Decode base64 string to binary data

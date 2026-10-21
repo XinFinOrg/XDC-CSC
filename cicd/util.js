@@ -4,7 +4,7 @@ const fs = require("node:fs");
 const dotenv = require("dotenv")
 const { ethers } = require("ethers");
 const axios = require("axios");
-const { getNumberField } = require("../scripts/utils/xdpos");
+const { getNumberField } = require("../scripts/utils/rpcResultFields");
 
 function writeEnv(key, path) {
   content = "PRIVATE_KEY=" + key;
