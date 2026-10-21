@@ -4,6 +4,7 @@ const fs = require("node:fs");
 const dotenv = require("dotenv")
 const { ethers } = require("ethers");
 const axios = require("axios");
+const { getNumberField } = require("../scripts/utils/xdpos");
 
 function writeEnv(key, path) {
   content = "PRIVATE_KEY=" + key;
@@ -78,7 +79,7 @@ async function getGapSubnet(config) {
         console.log("response.data.error", response.data.error)
         throw Error("error in subnet gapblock response")
       }
-      epochBlockNum = response.data.result.EpochBlockNumber;
+      epochBlockNum = getNumberField(response.data.result, "EpochBlockNumber");
       gapBlockNum = epochBlockNum-450+1
       if (gapBlockNum < 1){
         gapBlockNum = 1
@@ -104,7 +105,7 @@ async function getEpochParentnet(config) {
   };
   await axios.post(config.parentnetURL, data, {timeout: 10000}).then((response) => {
     if (response.status == 200) {
-      epochBlockNum = response.data.result.EpochBlockNumber;
+      epochBlockNum = getNumberField(response.data.result, "EpochBlockNumber");
       console.log("epochBlockNum", epochBlockNum)
     } else {
       console.log("response.status", response.status);
