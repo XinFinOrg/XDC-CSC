@@ -1,4 +1,5 @@
 const fetch = require("node-fetch").default;
+const { getField } = require("./rpcResultFields");
 
 function base64ToHex(base64String) {
   // Step 1: Decode base64 string to binary data
@@ -24,12 +25,13 @@ async function validators(url, number) {
 
   const data0 = await send(url, block0);
 
-  if (!data0["result"]["Masternodes"]) {
+  const masternodes = getField(data0["result"], "Masternodes");
+  if (!masternodes) {
     console.error("remote node block " + number + " no validators");
     return;
   }
 
-  return data0["result"]["Masternodes"];
+  return masternodes;
 }
 
 async function data(url, number) {
@@ -42,11 +44,11 @@ async function data(url, number) {
 
   const data0 = await send(url, block0);
 
-  if (!data0["result"]["Committed"]) {
+  if (!getField(data0["result"], "Committed")) {
     console.error("remote node block " + number + " is not committed");
     return;
   }
-  const data0Encoded = "0x" + base64ToHex(data0["result"]["EncodedRLP"]);
+  const data0Encoded = "0x" + base64ToHex(getField(data0["result"], "EncodedRLP"));
 
   return { data0Encoded };
 }
